@@ -1,0 +1,25 @@
+{
+  "cve_id": "CVE-2024-8112",
+  "additional_cve_ids": [],
+  "title": "Buffer Overflow in Industrial Control Protocol Library",
+  "severity": 5,
+  "cvss_score": 9.1,
+  "exploit_available": true,
+  "known_exploited": false,
+  "attack_vector": "NETWORK",
+  "patch_available": false,
+  "patch_release_date": null,
+  "last_scan_date": "2024-06-01",
+  "days_open": 40,
+  "threshold_days": null,
+  "solution": null,
+  "status": "Active",
+  "asset": {
+    "id": "asset-ot-12",
+    "hostname": "plc-controller-12",
+    "operating_system": "vxworks 7",
+    "environment": "production",
+    "risk_score": 3.8,
+    "internet_facing": false
+  }
+}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Finding summary{% endblock %}
+
+{% block content %}
+<article class="finding nontechnical-view">
+  {% if finding_id %}
+  <nav class="role-toggle">
+    <a href="/">&laquo; Back to findings</a>
+    <a href="/finding/{{ finding_id }}?role=technical">Technical</a>
+    <a href="/finding/{{ finding_id }}?role=nontechnical" class="active">Non-technical</a>
+    <a href="/finding/{{ finding_id }}/pipeline">Pipeline</a>
+    <a href="/finding/{{ finding_id }}/export?role=nontechnical">Export (.txt)</a>
+  </nav>
+  {% endif %}
+
+  <h1>{{ explanation.title or "Security finding" }}</h1>
+  <p class="badge {{ badge_class }}">{{ explanation.urgency | upper }}</p>
+
+  <p class="risk-summary">{{ explanation.risk_summary }}</p>
+
+  <section class="consequence">
+    <h2>What could happen</h2>
+    <p>{{ explanation.business_consequence }}</p>
+  </section>
+
+  <section class="timing">
+    <h2>When</h2>
+    <p>{{ explanation.time_horizon }}</p>
+  </section>
+
+  <section class="action">
+    <h2>What to do</h2>
+    <p>{{ explanation.action }}</p>
+    {% if explanation.mitigation %}
+    <p>{{ explanation.mitigation }}</p>
+    {% endif %}
+  </section>
+
+  {% if explanation.certainty_level != "Known" and explanation.limitations %}
+  <section class="limitations">
+    <h2>What this assessment could not take into account</h2>
+    <p>{{ explanation.limitations }}</p>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

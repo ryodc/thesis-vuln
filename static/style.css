@@ -1,0 +1,223 @@
+:root {
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+}
+
+.site-header {
+  background: #1f2933;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-header .site-title {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.site-nav a {
+  color: #cbd2d9;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.site-nav a:hover {
+  color: #fff;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.page-intro {
+  color: #52606d;
+}
+
+/* Filter form and pagination */
+
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  color: #52606d;
+}
+
+/* Findings table */
+
+.findings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.findings-table th,
+.findings-table td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.findings-table th {
+  background: #f0f4f8;
+}
+
+/* Badges */
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.badge-immediate {
+  background: #c0392b;
+}
+
+.badge-scheduled {
+  background: #d68910;
+}
+
+.badge-monitor {
+  background: #1e8449;
+}
+
+.badge-unknown {
+  background: #7f8c8d;
+}
+
+/* Finding pages */
+
+.finding {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.role-toggle {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.role-toggle a {
+  margin-right: 0.75rem;
+  text-decoration: none;
+  color: #2e6da4;
+}
+
+.role-toggle a.active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.identifiers {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  color: #52606d;
+}
+
+.identifiers .cve {
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.certainty {
+  font-size: 0.85rem;
+  color: #52606d;
+}
+
+.tree-path {
+  background: #f0f4f8;
+  border-radius: 4px;
+  padding: 0.5rem 1.5rem;
+}
+
+.inputs-used {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+  color: #52606d;
+  word-break: break-word;
+}
+
+dd.highlight {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.risk-summary {
+  font-size: 1.1rem;
+}
+
+.limitations {
+  border-top: 1px solid #e4e7eb;
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+  color: #52606d;
+}
+
+/* Upload page */
+
+.upload-form {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.upload-success {
+  color: #1e8449;
+}
+
+.upload-error {
+  color: #c0392b;
+}
+
+/* Pipeline page */
+
+.stage {
+  border-top: 1px solid #e4e7eb;
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stage:first-of-type {
+  border-top: none;
+  margin-top: 1rem;
+}
+
+.stage dl dt {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.stage dl dd {
+  margin: 0 0 0.25rem 0;
+}

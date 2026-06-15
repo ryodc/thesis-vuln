@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}{{ explanation.vulnerability_id or explanation.title or "Finding" }} - Technical view{% endblock %}
+
+{% block content %}
+<article class="finding technical-view">
+  {% if finding_id %}
+  <nav class="role-toggle">
+    <a href="/">&laquo; Back to findings</a>
+    <a href="/finding/{{ finding_id }}?role=technical" class="active">Technical</a>
+    <a href="/finding/{{ finding_id }}?role=nontechnical">Non-technical</a>
+    <a href="/finding/{{ finding_id }}/pipeline">Pipeline</a>
+    <a href="/finding/{{ finding_id }}/object">Raw object</a>
+    <a href="/finding/{{ finding_id }}/export?role=technical">Export (.txt)</a>
+  </nav>
+  {% endif %}
+
+  <h1>{{ explanation.title or "Untitled finding" }}</h1>
+
+  <p class="identifiers">
+    {% if explanation.vulnerability_id %}
+      <span class="cve">{{ explanation.vulnerability_id }}</span>
+      {% if explanation.technical_detail.additional_cve_ids %}
+        <span class="additional-cves">(also: {{ explanation.technical_detail.additional_cve_ids | join(", ") }})</span>
+      {% endif %}
+    {% else %}
+      <span class="cve">No CVE identifier</span>
+    {% endif %}
+    <span class="badge {{ badge_class }}">{{ explanation.urgency }}</span>
+    <span class="certainty">Certainty: {{ explanation.certainty_level }}</span>
+  </p>
+
+  <section class="ratings">
+    <h2>Ratings and evidence</h2>
+
+    <h3>Exploitation likelihood: {{ explanation.technical_detail.exploitation_likelihood }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.exploitation_likelihood.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.exploitation_likelihood.inputs }}</p>
+
+    <h3>Business impact: {{ explanation.technical_detail.business_impact }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.business_impact.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.business_impact.inputs }}</p>
+
+    <h3>Urgency: {{ explanation.urgency }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.urgency.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.urgency.inputs }}</p>
+  </section>
+
+  <section class="top-factors">
+    <h2>Top factors</h2>
+    <ul>
+      {% for factor in explanation.top_factors %}
+      <li><code>{{ factor.field }}</code> = <code>{{ factor.value }}</code> &mdash; {{ factor.label }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="asset-context">
+    <h2>Asset context</h2>
+    <dl>
+      <dt>Status</dt>
+      <dd{% if explanation.technical_detail.status == "Reopened" %} class="highlight"{% endif %}>
+        {{ explanation.technical_detail.status or "Unknown" }}
+      </dd>
+
+      <dt>Operating system</dt>
+      <dd>{{ explanation.technical_detail.operating_system or "Unknown" }}</dd>
+
+      <dt>Environment</dt>
+      <dd>{{ explanation.technical_detail.asset_environment or "Unknown" }}</dd>
+
+      <dt>Severity band / CVSS</dt>
+      <dd>
+        {{ explanation.technical_detail.severity_band or "Unknown" }}
+        {% if explanation.technical_detail.cvss_score is not none %}
+          (CVSS {{ explanation.technical_detail.cvss_score }})
+        {% endif %}
+      </dd>
+
+      <dt>Days open vs threshold</dt>
+      <dd>
+        {% if explanation.technical_detail.days_open is not none and explanation.technical_detail.threshold_days is not none %}
+          {{ explanation.technical_detail.days_open }} days open against a
+          {{ explanation.technical_detail.threshold_days }}-day threshold
+          ({{ explanation.technical_detail.days_open - explanation.technical_detail.threshold_days }}
+          days {{ "overdue" if explanation.technical_detail.days_open > explanation.technical_detail.threshold_days else "remaining" }})
+        {% else %}
+          Unknown
+        {% endif %}
+      </dd>
+    </dl>
+  </section>
+
+  {% if explanation.technical_detail.solution_text %}
+  <section class="vendor-solution">
+    <h2>Vendor solution</h2>
+    <p>{{ explanation.technical_detail.solution_text }}</p>
+  </section>
+  {% endif %}
+
+  <section class="action">
+    <h2>Recommended action</h2>
+    <p>{{ explanation.action }}</p>
+    <p>{{ explanation.time_horizon }}</p>
+  </section>
+
+  {% if explanation.mitigation %}
+  <section class="mitigation">
+    <h2>Temporary mitigation</h2>
+    <p>{{ explanation.mitigation }}</p>
+  </section>
+  {% endif %}
+
+  {% if explanation.limitations %}
+  <section class="limitations">
+    <h2>Limitations</h2>
+    <p>{{ explanation.limitations }}</p>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Findings - Vulnerability Explainer{% endblock %}
+
+{% block content %}
+<h1>Findings</h1>
+
+{% if uploaded is not none %}
+<p class="upload-success">
+  {% if uploaded == 0 %}
+    No "Internal Vulnerabilities" rows were found in that file.
+  {% else %}
+    Added {{ uploaded }} finding{{ "s" if uploaded != 1 else "" }} from the upload.
+  {% endif %}
+</p>
+{% endif %}
+
+{% if has_any_findings %}
+<form method="get" action="/" class="filter-form">
+  <select name="urgency">
+    <option value="">All urgencies</option>
+    {% for option in urgency_options %}
+    <option value="{{ option }}" {% if option == urgency_filter %}selected{% endif %}>{{ option }}</option>
+    {% endfor %}
+  </select>
+  <input type="text" name="q" placeholder="Search title or CVE" value="{{ query }}">
+  <button type="submit">Filter</button>
+  {% if urgency_filter or query %}
+  <a href="/">Clear</a>
+  {% endif %}
+</form>
+
+<p class="page-intro">
+  {% if total == 0 %}
+    No findings match this filter.
+  {% else %}
+    Showing {{ start + 1 }}&ndash;{{ start + findings | length }} of {{ total }},
+    sorted by urgency. Each finding can be viewed as a technical analysis
+    or as a plain-language summary; both views are generated from the
+    same explanation object.
+  {% endif %}
+</p>
+
+{% if findings %}
+<table class="findings-table">
+  <thead>
+    <tr>
+      <th>Urgency</th>
+      <th>Title</th>
+      <th>CVE</th>
+      <th>Source</th>
+      <th>View</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for finding in findings %}
+    <tr>
+      <td><span class="badge {{ finding.badge_class }}">{{ finding.urgency }}</span></td>
+      <td>{{ finding.title or "Untitled finding" }}</td>
+      <td>{{ finding.vulnerability_id or "—" }}</td>
+      <td>{{ finding.source_label }}</td>
+      <td>
+        <a href="/finding/{{ finding.id }}?role=technical">Technical</a>
+        &middot;
+        <a href="/finding/{{ finding.id }}?role=nontechnical">Non-technical</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% set base_args = "&urgency=" + urgency_filter + "&q=" + query %}
+  {% if page > 1 %}
+  <a href="/?page={{ page - 1 }}{{ base_args }}">&laquo; Previous</a>
+  {% endif %}
+  <span>Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="/?page={{ page + 1 }}{{ base_args }}">Next &raquo;</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endif %}
+
+{% else %}
+<form method="post" action="/upload" enctype="multipart/form-data" class="upload-form">
+  <input type="file" name="csv_file" accept=".csv" required>
+  <button type="submit">Upload CSV</button>
+</form>
+<form method="post" action="/samples">
+  <button type="submit">Load sample scenarios</button>
+</form>
+{% endif %}
+{% endblock %}

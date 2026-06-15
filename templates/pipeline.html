@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ explanation.vulnerability_id or explanation.title or "Finding" }} - Pipeline{% endblock %}
+
+{% block content %}
+<article class="finding pipeline-view">
+  <nav class="role-toggle">
+    <a href="/">&laquo; Back to findings</a>
+    <a href="/finding/{{ finding_id }}?role=technical">Technical</a>
+    <a href="/finding/{{ finding_id }}?role=nontechnical">Non-technical</a>
+    <a href="/finding/{{ finding_id }}/pipeline" class="active">Pipeline</a>
+    <a href="/finding/{{ finding_id }}/object">Raw object</a>
+    <a href="/finding/{{ finding_id }}/export?role=technical">Export (.txt)</a>
+  </nav>
+
+  <h1>{{ explanation.title or "Untitled finding" }}</h1>
+  <p class="page-intro">
+    How this finding moved through the pipeline: ingestion normalised the raw
+    record, abstraction traversed the three decision trees, and explanation
+    assembled the object behind both stakeholder views.
+  </p>
+
+  <section class="stage">
+    <h2>Stage 1 &mdash; Ingestion</h2>
+    <p class="certainty">
+      Source format: <code>{{ finding.source_format }}</code>
+      &mdash; fields this source can never provide:
+      {% if finding.absent_by_format %}
+        {{ finding.absent_by_format | join(", ") }}
+      {% else %}
+        none
+      {% endif %}
+    </p>
+    <dl>
+      {% for key, value in finding.items() %}
+      {% if key not in ("source_format", "absent_by_format") %}
+      <dt>{{ key }}</dt>
+      <dd>{{ value if value is not none else "Unknown" }}</dd>
+      {% endif %}
+      {% endfor %}
+    </dl>
+  </section>
+
+  <section class="stage">
+    <h2>Stage 2 &mdash; Abstraction (decision trees)</h2>
+
+    <h3>Exploitation likelihood &rarr; {{ explanation.technical_detail.exploitation_likelihood }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.exploitation_likelihood.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.exploitation_likelihood.inputs }}</p>
+
+    <h3>Business impact &rarr; {{ explanation.technical_detail.business_impact }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.business_impact.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.business_impact.inputs }}</p>
+
+    <h3>Urgency &rarr; {{ explanation.urgency }}</h3>
+    <ol class="tree-path">
+      {% for step in explanation.evidence_pointers.urgency.path %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.urgency.inputs }}</p>
+  </section>
+
+  <section class="stage">
+    <h2>Stage 3 &mdash; Explanation</h2>
+    <dl>
+      <dt>Certainty</dt>
+      <dd>{{ explanation.certainty_level }}</dd>
+
+      <dt>Top factors</dt>
+      <dd>
+        <ol>
+          {% for factor in explanation.top_factors %}
+          <li><code>{{ factor.field }}</code> = <code>{{ factor.value }}</code> &mdash; {{ factor.label }}</li>
+          {% endfor %}
+        </ol>
+      </dd>
+
+      <dt>Risk summary</dt>
+      <dd>{{ explanation.risk_summary }}</dd>
+
+      <dt>Mitigation</dt>
+      <dd>{{ explanation.mitigation or "None (not required)" }}</dd>
+
+      <dt>Limitations</dt>
+      <dd>{{ explanation.limitations or "None recorded" }}</dd>
+    </dl>
+  </section>
+
+  <section class="stage">
+    <h2>Stage 4 &mdash; Two renderings</h2>
+    <p>
+      The same object above is rendered as a
+      <a href="/finding/{{ finding_id }}?role=technical">technical view</a>
+      for analysts and a
+      <a href="/finding/{{ finding_id }}?role=nontechnical">non-technical view</a>
+      for delivery and client-facing roles. Neither view performs any further
+      computation; both display a subset of what is shown here.
+    </p>
+  </section>
+</article>
+{% endblock %}

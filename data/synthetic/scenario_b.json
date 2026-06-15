@@ -1,0 +1,25 @@
+{
+  "cve_id": "CVE-2024-5021",
+  "additional_cve_ids": [],
+  "title": "Remote Code Execution in Internal CI Agent",
+  "severity": 4,
+  "cvss_score": 8.5,
+  "exploit_available": false,
+  "known_exploited": false,
+  "attack_vector": "NETWORK",
+  "patch_available": true,
+  "patch_release_date": "2024-05-01",
+  "last_scan_date": "2024-05-20",
+  "days_open": 95,
+  "threshold_days": null,
+  "solution": "Update the CI agent package to version 2.3.4 or later and restart the agent service.",
+  "status": "Active",
+  "asset": {
+    "id": "asset-dev-07",
+    "hostname": "ci-runner-07",
+    "operating_system": "ubuntu 22.04",
+    "environment": "development",
+    "risk_score": 3.2,
+    "internet_facing": false
+  }
+}

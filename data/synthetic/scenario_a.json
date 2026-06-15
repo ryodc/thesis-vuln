@@ -1,0 +1,25 @@
+{
+  "cve_id": "CVE-2024-3094",
+  "additional_cve_ids": [],
+  "title": "XZ Utils Backdoor (liblzma)",
+  "severity": 5,
+  "cvss_score": 9.8,
+  "exploit_available": true,
+  "known_exploited": true,
+  "attack_vector": "NETWORK",
+  "patch_available": true,
+  "patch_release_date": "2024-03-29",
+  "last_scan_date": "2024-04-10",
+  "days_open": 12,
+  "threshold_days": null,
+  "solution": "Upgrade xz-utils / liblzma to a version newer than 5.6.0, or downgrade to 5.4.x, on all affected hosts immediately.",
+  "status": "Active",
+  "asset": {
+    "id": "asset-edge-01",
+    "hostname": "edge-gateway-01",
+    "operating_system": "debian 12",
+    "environment": "production",
+    "risk_score": 8.4,
+    "internet_facing": true
+  }
+}

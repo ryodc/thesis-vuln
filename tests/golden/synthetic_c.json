@@ -1,0 +1,74 @@
+{
+  "action": "No direct patch is available. Consult the responsible technical team for the appropriate remediation route.",
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "certainty_level": "Known",
+  "evidence_pointers": {
+    "business_impact": {
+      "inputs": {
+        "asset_criticality": "Low",
+        "cvss_score": 9.1
+      },
+      "path": [
+        "score band Critical from CVSS 9.1",
+        "severity band Critical × asset criticality Low → High"
+      ]
+    },
+    "exploitation_likelihood": {
+      "inputs": {
+        "asset_internet_facing": false,
+        "exploit_available": true,
+        "known_exploited": false
+      },
+      "path": [
+        "public exploit available, but the asset is not internet-facing"
+      ]
+    },
+    "urgency": {
+      "inputs": {
+        "exploitation_likelihood": "Medium",
+        "patch_available": false
+      },
+      "path": [
+        "exploitation likelihood is Medium",
+        "not yet overdue, or no patch available → Scheduled"
+      ]
+    }
+  },
+  "limitations": null,
+  "mitigation": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system.",
+  "risk_summary": "This vulnerability carries Scheduled urgency because no vendor patch is currently available and a public exploit is available for this vulnerability.",
+  "technical_detail": {
+    "additional_cve_ids": [],
+    "asset_environment": "production",
+    "business_impact": "High",
+    "cvss_score": 9.1,
+    "days_open": 40,
+    "exploitation_likelihood": "Medium",
+    "operating_system": "vxworks 7",
+    "severity_band": "Critical",
+    "solution_text": null,
+    "status": "Active",
+    "threshold_days": null
+  },
+  "time_horizon": "Include this finding in the next planned remediation cycle.",
+  "title": "Buffer Overflow in Industrial Control Protocol Library",
+  "top_factors": [
+    {
+      "field": "patch_available",
+      "label": "no vendor patch is currently available",
+      "value": false
+    },
+    {
+      "field": "exploit_available",
+      "label": "a public exploit is available for this vulnerability",
+      "value": true
+    },
+    {
+      "field": "known_exploited",
+      "label": "no active exploitation has been reported",
+      "value": false
+    }
+  ],
+  "urgency": "Scheduled",
+  "vulnerability_id": "CVE-2024-8112"
+}

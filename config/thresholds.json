@@ -1,0 +1,18 @@
+{
+  "cvss_bands": {
+    "critical_min": 9.0,
+    "high_min": 7.0,
+    "medium_min": 4.0
+  },
+  "default_threshold_days": 90,
+  "criticality_from_environment": {
+    "production": "High",
+    "staging": "Medium",
+    "acceptation": "Low",
+    "development": "Low"
+  },
+  "asset_risk_score_bands": {
+    "high_min": 7.0,
+    "medium_min": 4.0
+  }
+}

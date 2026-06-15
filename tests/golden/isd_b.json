@@ -1,0 +1,76 @@
+{
+  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability.",
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "certainty_level": "Known uncertainty",
+  "evidence_pointers": {
+    "business_impact": {
+      "inputs": {
+        "asset_criticality": "High",
+        "cvss_score": null,
+        "severity_band": "High"
+      },
+      "path": [
+        "no numeric CVSS score; using scanner severity band 'High'",
+        "severity band High × asset criticality High → High"
+      ]
+    },
+    "exploitation_likelihood": {
+      "inputs": {
+        "exploit_available": null
+      },
+      "path": [
+        "exploit availability not provided by source"
+      ]
+    },
+    "urgency": {
+      "inputs": {
+        "asset_internet_facing": false,
+        "days_open": 30,
+        "exploitation_likelihood": "Unknown",
+        "patch_available": true,
+        "threshold_days": 90
+      },
+      "path": [
+        "exploitation likelihood unknown",
+        "a fix exists and should enter the next remediation cycle → Scheduled"
+      ]
+    }
+  },
+  "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. The business impact rating is based on the scanner's categorical severity rather than a numeric CVSS score. Asset criticality was inferred from the production environment label. The system does not determine asset ownership or final remediation decisions.",
+  "mitigation": null,
+  "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 30 days, within the 90-day threshold. How likely exploitation is could not be determined from the available data.",
+  "technical_detail": {
+    "additional_cve_ids": [],
+    "asset_environment": "production",
+    "business_impact": "High",
+    "cvss_score": null,
+    "days_open": 30,
+    "exploitation_likelihood": "Unknown",
+    "operating_system": "windows server 2019 standard",
+    "severity_band": "High",
+    "solution_text": "Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability. Patch: Following are links for downloading patches to fix the vulnerabilities: Putty 0.81",
+    "status": "Active",
+    "threshold_days": 90
+  },
+  "time_horizon": "Include this finding in the next planned remediation cycle.",
+  "title": "Putty (Pageant) Secret Keys Disclosure Vulnerability (CVE-2024-31497)",
+  "top_factors": [
+    {
+      "field": "asset_internet_facing",
+      "label": "the affected system is not reachable from the internet",
+      "value": false
+    },
+    {
+      "field": "days_open",
+      "label": "open 30 days, within the 90-day threshold",
+      "value": 30
+    },
+    {
+      "field": "patch_available",
+      "label": "a vendor patch is available",
+      "value": true
+    }
+  ],
+  "urgency": "Scheduled",
+  "vulnerability_id": "CVE-2024-31497"
+}

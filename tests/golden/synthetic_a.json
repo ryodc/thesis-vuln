@@ -1,0 +1,71 @@
+{
+  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Upgrade xz-utils / liblzma to a version newer than 5.6.0, or downgrade to 5.4.x, on all affected hosts immediately.",
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to take control of a business-critical system, with the potential for serious disruption to operations or exposure of sensitive data.",
+  "certainty_level": "Known",
+  "evidence_pointers": {
+    "business_impact": {
+      "inputs": {
+        "asset_criticality": "High",
+        "cvss_score": 9.8
+      },
+      "path": [
+        "score band Critical from CVSS 9.8",
+        "severity band Critical × asset criticality High → Critical"
+      ]
+    },
+    "exploitation_likelihood": {
+      "inputs": {
+        "exploit_available": true,
+        "known_exploited": true
+      },
+      "path": [
+        "public exploit available and active exploitation observed in the wild"
+      ]
+    },
+    "urgency": {
+      "inputs": {
+        "exploitation_likelihood": "High"
+      },
+      "path": [
+        "exploitation likelihood is High → Immediate regardless of patch status or age"
+      ]
+    }
+  },
+  "limitations": null,
+  "mitigation": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
+  "risk_summary": "This vulnerability carries Immediate urgency because a public exploit is available for this vulnerability and active exploitation has been observed in the wild.",
+  "technical_detail": {
+    "additional_cve_ids": [],
+    "asset_environment": "production",
+    "business_impact": "Critical",
+    "cvss_score": 9.8,
+    "days_open": 12,
+    "exploitation_likelihood": "High",
+    "operating_system": "debian 12",
+    "severity_band": "Critical",
+    "solution_text": "Upgrade xz-utils / liblzma to a version newer than 5.6.0, or downgrade to 5.4.x, on all affected hosts immediately.",
+    "status": "Active",
+    "threshold_days": null
+  },
+  "time_horizon": "Action should begin within the current working week; escalate if remediation cannot start promptly.",
+  "title": "XZ Utils Backdoor (liblzma)",
+  "top_factors": [
+    {
+      "field": "exploit_available",
+      "label": "a public exploit is available for this vulnerability",
+      "value": true
+    },
+    {
+      "field": "known_exploited",
+      "label": "active exploitation has been observed in the wild",
+      "value": true
+    },
+    {
+      "field": "asset_criticality",
+      "label": "high-criticality production system",
+      "value": "High"
+    }
+  ],
+  "urgency": "Immediate",
+  "vulnerability_id": "CVE-2024-3094"
+}
