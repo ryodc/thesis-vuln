@@ -3,8 +3,8 @@ import itertools
 import pytest
 
 from explainer.abstraction import (
-    assess_business_impact,
     assess_exploitation_likelihood,
+    assess_preliminary_impact,
     assess_urgency,
     evaluate,
 )
@@ -61,64 +61,49 @@ def test_exploitation_likelihood_tree(overrides, expected_value, expected_input_
 
 
 # ---------------------------------------------------------------------------
-# Tree 2: business impact (thesis Table 5.4 + severity-band fallback, ADR-0003)
+# Tree 2: preliminary impact (environment × technical severity, ADR-0007)
 # ---------------------------------------------------------------------------
 
-BUSINESS_IMPACT_CASES = [
-    pytest.param({"cvss_score": 9.5, "asset_criticality": "High"}, "Critical", id="critical-band-high-crit"),
-    pytest.param({"cvss_score": 9.5, "asset_criticality": "Medium"}, "High", id="critical-band-medium-crit"),
-    pytest.param({"cvss_score": 9.5, "asset_criticality": "Low"}, "High", id="critical-band-low-crit"),
-    pytest.param({"cvss_score": 8.0, "asset_criticality": "High"}, "High", id="high-band-high-crit"),
-    pytest.param({"cvss_score": 8.0, "asset_criticality": "Medium"}, "Medium", id="high-band-medium-crit"),
-    pytest.param({"cvss_score": 8.0, "asset_criticality": "Low"}, "Medium", id="high-band-low-crit"),
-    pytest.param({"cvss_score": 5.0, "asset_criticality": "High"}, "Medium", id="medium-band-high-crit"),
-    pytest.param({"cvss_score": 5.0, "asset_criticality": "Medium"}, "Low", id="medium-band-medium-crit"),
-    pytest.param({"cvss_score": 5.0, "asset_criticality": "Low"}, "Low", id="medium-band-low-crit"),
-    pytest.param({"cvss_score": 2.0, "asset_criticality": "High"}, "Low", id="low-band-high-crit"),
-    pytest.param({"cvss_score": 2.0, "asset_criticality": "Medium"}, "Low", id="low-band-medium-crit"),
-    pytest.param({"cvss_score": 2.0, "asset_criticality": "Low"}, "Low", id="low-band-low-crit"),
+PRELIMINARY_IMPACT_CASES = [
+    pytest.param({"asset_environment": "production", "cvss_score": 9.8}, "High", id="prod-high"),
+    pytest.param({"asset_environment": "production", "cvss_score": 5.0}, "Medium", id="prod-moderate"),
+    pytest.param({"asset_environment": "production", "cvss_score": 2.0}, "Low", id="prod-low"),
+    pytest.param({"asset_environment": "development", "cvss_score": 9.8}, "Medium", id="nonprod-high"),
+    pytest.param({"asset_environment": "development", "cvss_score": 5.0}, "Low", id="nonprod-moderate"),
+    pytest.param({"asset_environment": "development", "cvss_score": 2.0}, "Low", id="nonprod-low"),
 ]
 
 
-@pytest.mark.parametrize("overrides, expected_value", BUSINESS_IMPACT_CASES)
-def test_business_impact_matrix(overrides, expected_value):
+@pytest.mark.parametrize("overrides, expected_value", PRELIMINARY_IMPACT_CASES)
+def test_preliminary_impact_rule(overrides, expected_value):
     finding = make_finding(**overrides)
-    outcome = assess_business_impact(finding)
+    outcome = assess_preliminary_impact(finding)
 
     assert outcome.value == expected_value
     assert outcome.path
-    assert outcome.inputs_used["cvss_score"] == overrides["cvss_score"]
-    assert outcome.inputs_used["asset_criticality"] == overrides["asset_criticality"]
-    assert "severity_band" not in outcome.inputs_used
+    assert outcome.inputs_used["asset_environment"] == overrides["asset_environment"]
 
 
-def test_business_impact_falls_back_to_severity_band_when_cvss_missing():
-    finding = make_finding(cvss_score=None, severity_band="High", asset_criticality="High")
-    outcome = assess_business_impact(finding)
+def test_preliminary_impact_uses_severity_band_when_cvss_missing():
+    finding = make_finding(asset_environment="production", cvss_score=None, severity_band="High")
+    outcome = assess_preliminary_impact(finding)
 
     assert outcome.value == "High"
-    assert outcome.inputs_used == {
-        "cvss_score": None,
-        "severity_band": "High",
-        "asset_criticality": "High",
-    }
-    assert "severity band" in outcome.path[0]
+    assert outcome.inputs_used == {"asset_environment": "production", "technical_severity": "High"}
 
 
-def test_business_impact_unknown_when_no_score_and_no_band():
-    finding = make_finding(cvss_score=None, severity_band=None, asset_criticality="High")
-    outcome = assess_business_impact(finding)
+def test_preliminary_impact_unknown_when_no_severity():
+    finding = make_finding(asset_environment="production", cvss_score=None, severity_band=None)
+    outcome = assess_preliminary_impact(finding)
 
     assert outcome.value == "Unknown"
-    assert outcome.inputs_used == {"cvss_score": None, "severity_band": None}
 
 
-def test_business_impact_unknown_when_asset_criticality_missing():
-    finding = make_finding(cvss_score=9.5, asset_criticality=None)
-    outcome = assess_business_impact(finding)
+def test_preliminary_impact_unknown_when_environment_missing():
+    finding = make_finding(asset_environment=None, cvss_score=9.8)
+    outcome = assess_preliminary_impact(finding)
 
     assert outcome.value == "Unknown"
-    assert outcome.inputs_used == {"cvss_score": 9.5, "asset_criticality": None}
 
 
 # ---------------------------------------------------------------------------
@@ -231,7 +216,7 @@ def test_urgency_uses_default_threshold_when_not_provided():
 # ---------------------------------------------------------------------------
 
 VALID_LIKELIHOOD_VALUES = {"High", "Medium", "Low", "Unknown"}
-VALID_IMPACT_VALUES = {"Critical", "High", "Medium", "Low", "Unknown"}
+VALID_IMPACT_VALUES = {"High", "Medium", "Low", "Unknown"}
 VALID_URGENCY_VALUES = {"Immediate", "Scheduled", "Monitor"}
 
 

@@ -5,12 +5,12 @@
   "evidence_pointers": {
     "business_impact": {
       "inputs": {
-        "asset_criticality": "Low",
-        "cvss_score": 9.1
+        "asset_environment": "production",
+        "technical_severity": "Critical"
       },
       "path": [
-        "score band Critical from CVSS 9.1",
-        "severity band Critical × asset criticality Low → High"
+        "asset environment production; technical severity band Critical",
+        "production asset with Critical severity \u2192 High"
       ]
     },
     "exploitation_likelihood": {
@@ -30,7 +30,7 @@
       },
       "path": [
         "exploitation likelihood is Medium",
-        "not yet overdue, or no patch available → Scheduled"
+        "not yet overdue, or no patch available \u2192 Scheduled"
       ]
     }
   },

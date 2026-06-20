@@ -5,13 +5,12 @@
   "evidence_pointers": {
     "business_impact": {
       "inputs": {
-        "asset_criticality": "High",
-        "cvss_score": null,
-        "severity_band": "High"
+        "asset_environment": "production",
+        "technical_severity": "High"
       },
       "path": [
-        "no numeric CVSS score; using scanner severity band 'High'",
-        "severity band High × asset criticality High → High"
+        "asset environment production; technical severity band High",
+        "production asset with High severity \u2192 High"
       ]
     },
     "exploitation_likelihood": {
@@ -31,11 +30,11 @@
       },
       "path": [
         "exploitation likelihood unknown",
-        "finding exceeds the 90-day remediation threshold → Scheduled"
+        "finding exceeds the 90-day remediation threshold \u2192 Scheduled"
       ]
     }
   },
-  "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. The business impact rating is based on the scanner's categorical severity rather than a numeric CVSS score. Asset criticality was inferred from the production environment label. No CVE identifier is associated with this finding; it was detected as end-of-life or misconfigured software. The system does not determine asset ownership or final remediation decisions.",
+  "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. No CVE identifier is associated with this finding; it was detected as end-of-life or misconfigured software. The system does not determine asset ownership or final remediation decisions.",
   "mitigation": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system.",
   "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 967 days, 877 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
   "technical_detail": {
@@ -65,9 +64,9 @@
       "value": 967
     },
     {
-      "field": "asset_criticality",
-      "label": "high-criticality production system",
-      "value": "High"
+      "field": "asset_environment",
+      "label": "production system",
+      "value": "production"
     }
   ],
   "urgency": "Scheduled",

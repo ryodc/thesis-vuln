@@ -5,13 +5,12 @@
   "evidence_pointers": {
     "business_impact": {
       "inputs": {
-        "asset_criticality": "High",
-        "cvss_score": null,
-        "severity_band": "High"
+        "asset_environment": "production",
+        "technical_severity": "High"
       },
       "path": [
-        "no numeric CVSS score; using scanner severity band 'High'",
-        "severity band High × asset criticality High → High"
+        "asset environment production; technical severity band High",
+        "production asset with High severity \u2192 High"
       ]
     },
     "exploitation_likelihood": {
@@ -31,11 +30,11 @@
       },
       "path": [
         "exploitation likelihood unknown",
-        "asset is internet-facing and the finding is 803 days past the 90-day remediation threshold → Immediate"
+        "asset is internet-facing and the finding is 803 days past the 90-day remediation threshold \u2192 Immediate"
       ]
     }
   },
-  "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. The business impact rating is based on the scanner's categorical severity rather than a numeric CVSS score. Asset criticality was inferred from the production environment label. The system does not determine asset ownership or final remediation decisions.",
+  "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. The system does not determine asset ownership or final remediation decisions.",
   "mitigation": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
   "risk_summary": "This vulnerability carries Immediate urgency because the affected system is reachable from the internet and open 893 days, 803 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
   "technical_detail": {
@@ -65,9 +64,9 @@
       "value": 893
     },
     {
-      "field": "asset_criticality",
-      "label": "high-criticality production system",
-      "value": "High"
+      "field": "asset_environment",
+      "label": "production system",
+      "value": "production"
     }
   ],
   "urgency": "Immediate",

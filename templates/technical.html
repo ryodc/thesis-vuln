@@ -41,7 +41,7 @@
     </ol>
     <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.exploitation_likelihood.inputs }}</p>
 
-    <h3>Business impact: {{ explanation.technical_detail.business_impact }}</h3>
+    <h3>Preliminary impact: {{ explanation.technical_detail.business_impact }}</h3>
     <ol class="tree-path">
       {% for step in explanation.evidence_pointers.business_impact.path %}
       <li>{{ step }}</li>

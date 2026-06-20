@@ -34,7 +34,7 @@ def test_top_factors_capped_at_three_and_drawn_from_decisive_paths():
     fields = [factor["field"] for factor in factors]
     assert "days_open" in fields
     assert "asset_internet_facing" in fields
-    assert "asset_criticality" in fields
+    assert "asset_environment" in fields
 
 
 def test_top_factors_exclude_unknown_likelihood_path():
@@ -90,6 +90,7 @@ def test_certainty_known_when_nothing_missing():
         asset_internet_facing=True,
         cvss_score=9.8,
         asset_criticality="High",
+        asset_environment="production",
         patch_available=True,
         days_open=10,
         threshold_days=90,
@@ -105,6 +106,7 @@ def test_certainty_known_uncertainty_when_missing_fields_are_documented_absent()
         absent_by_format=ISD_ABSENT_FIELDS,
         severity_band="High",
         asset_criticality="High",
+        asset_environment="production",
         asset_internet_facing=True,
         days_open=893,
         threshold_days=90,
@@ -141,6 +143,7 @@ def test_certainty_unknown_uncertainty_when_normally_present_field_is_null():
         exploit_available=None,
         cvss_score=9.0,
         asset_criticality="High",
+        asset_environment="production",
         patch_available=True,
         days_open=10,
         threshold_days=90,
@@ -260,7 +263,7 @@ def test_limitations_assembled_for_isd_eol_finding():
 
     assert "ISD data source" in explanation.limitations
     assert "categorical severity" in explanation.limitations
-    assert "production environment label" in explanation.limitations
+    assert "preliminary assessment" in explanation.limitations
     assert "No CVE identifier is associated" in explanation.limitations
     assert explanation.limitations.endswith(
         "The system does not determine asset ownership or final remediation decisions."

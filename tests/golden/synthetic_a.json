@@ -1,16 +1,16 @@
 {
   "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Upgrade xz-utils / liblzma to a version newer than 5.6.0, or downgrade to 5.4.x, on all affected hosts immediately.",
-  "business_consequence": "If exploited, this vulnerability could allow an attacker to take control of a business-critical system, with the potential for serious disruption to operations or exposure of sensitive data.",
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
   "certainty_level": "Known",
   "evidence_pointers": {
     "business_impact": {
       "inputs": {
-        "asset_criticality": "High",
-        "cvss_score": 9.8
+        "asset_environment": "production",
+        "technical_severity": "Critical"
       },
       "path": [
-        "score band Critical from CVSS 9.8",
-        "severity band Critical × asset criticality High → Critical"
+        "asset environment production; technical severity band Critical",
+        "production asset with Critical severity \u2192 High"
       ]
     },
     "exploitation_likelihood": {
@@ -27,7 +27,7 @@
         "exploitation_likelihood": "High"
       },
       "path": [
-        "exploitation likelihood is High → Immediate regardless of patch status or age"
+        "exploitation likelihood is High \u2192 Immediate regardless of patch status or age"
       ]
     }
   },
@@ -37,7 +37,7 @@
   "technical_detail": {
     "additional_cve_ids": [],
     "asset_environment": "production",
-    "business_impact": "Critical",
+    "business_impact": "High",
     "cvss_score": 9.8,
     "days_open": 12,
     "exploitation_likelihood": "High",
@@ -61,9 +61,9 @@
       "value": true
     },
     {
-      "field": "asset_criticality",
-      "label": "high-criticality production system",
-      "value": "High"
+      "field": "asset_environment",
+      "label": "production system",
+      "value": "production"
     }
   ],
   "urgency": "Immediate",

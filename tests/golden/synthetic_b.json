@@ -5,12 +5,12 @@
   "evidence_pointers": {
     "business_impact": {
       "inputs": {
-        "asset_criticality": "Low",
-        "cvss_score": 8.5
+        "asset_environment": "development",
+        "technical_severity": "High"
       },
       "path": [
-        "score band High from CVSS 8.5",
-        "severity band High × asset criticality Low → Medium"
+        "asset environment non-production; technical severity band High",
+        "non-production asset with High severity \u2192 Medium"
       ]
     },
     "exploitation_likelihood": {
@@ -31,7 +31,7 @@
       },
       "path": [
         "exploitation likelihood is Low",
-        "a patch is available and the finding is 5 days past the 90-day remediation threshold → Scheduled"
+        "a patch is available and the finding is 5 days past the 90-day remediation threshold \u2192 Scheduled"
       ]
     }
   },

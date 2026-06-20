@@ -61,11 +61,20 @@ def _asset_criticality_label(finding: NormalisedFinding, value: object) -> str:
     return f"{str(value).lower()}-criticality {environment} system"
 
 
+def _asset_environment_label(finding: NormalisedFinding, value: object) -> str:
+    if value is None:
+        return "asset environment not specified"
+    if str(value).strip().lower() == "production":
+        return "production system"
+    return f"{value} (non-production) system"
+
+
 _FACTOR_LABEL_BUILDERS = {
     "asset_internet_facing": _internet_facing_label,
     "patch_available": _patch_available_label,
     "exploit_available": _exploit_available_label,
     "known_exploited": _known_exploited_label,
+    "asset_environment": _asset_environment_label,
     "asset_criticality": _asset_criticality_label,
 }
 
@@ -256,19 +265,11 @@ def _limitations(finding: NormalisedFinding, abstraction: AbstractionResult) -> 
             f"{source} data source, so exploitation likelihood could not be assessed."
         )
 
-    if "severity_band" in abstraction.business_impact.inputs_used:
+    if finding.source_format == "isd_csv" and finding.asset_environment is not None:
         sentences.append(
-            "The business impact rating is based on the scanner's categorical severity "
-            "rather than a numeric CVSS score."
-        )
-
-    if (
-        finding.source_format == "isd_csv"
-        and finding.asset_environment is not None
-        and abstraction.business_impact.inputs_used.get("asset_criticality") is not None
-    ):
-        sentences.append(
-            f"Asset criticality was inferred from the {finding.asset_environment} environment label."
+            "Impact is a preliminary assessment based on the asset environment and the "
+            "scanner's categorical severity; asset criticality, business service, and data "
+            "sensitivity were not available in the source."
         )
 
     if finding.vulnerability_id is None:

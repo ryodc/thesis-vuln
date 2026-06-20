@@ -106,7 +106,7 @@ def render_technical_text(explanation: ExplanationObject) -> str:
         lines.append(f"  - {step}")
     lines.append(f"  inputs used: {pointers['exploitation_likelihood']['inputs']}")
     lines.append("")
-    lines.append(f"Business impact: {detail['business_impact']}")
+    lines.append(f"Preliminary impact: {detail['business_impact']}")
     for step in pointers["business_impact"]["path"]:
         lines.append(f"  - {step}")
     lines.append(f"  inputs used: {pointers['business_impact']['inputs']}")

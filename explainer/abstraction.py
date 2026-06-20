@@ -16,12 +16,8 @@ from __future__ import annotations
 from explainer.config import THRESHOLDS, cvss_score_to_band
 from explainer.models import AbstractionResult, NormalisedFinding, TreeOutcome
 
-BUSINESS_IMPACT_MATRIX = {
-    "Critical": {"High": "Critical", "Medium": "High", "Low": "High"},
-    "High": {"High": "High", "Medium": "Medium", "Low": "Medium"},
-    "Medium": {"High": "Medium", "Medium": "Low", "Low": "Low"},
-    "Low": {"High": "Low", "Medium": "Low", "Low": "Low"},
-}
+_PRODUCTION_IMPACT = {"high": "High", "moderate": "Medium", "low": "Low"}
+_NONPRODUCTION_IMPACT = {"high": "Medium", "moderate": "Low", "low": "Low"}
 
 
 def assess_exploitation_likelihood(finding: NormalisedFinding) -> TreeOutcome:
@@ -74,40 +70,59 @@ def assess_exploitation_likelihood(finding: NormalisedFinding) -> TreeOutcome:
     )
 
 
-def assess_business_impact(finding: NormalisedFinding) -> TreeOutcome:
-    """Tree 2: business impact from severity and asset criticality.
+def _technical_severity_tier(finding: NormalisedFinding) -> tuple[str | None, str | None]:
+    """Return (tier, band): tier in {high, moderate, low} or None.
 
-    Falls back to the scanner's categorical severity band when no
-    numeric CVSS score is available, rather than fabricating one
-    (ADR-0003).
+    The band comes from the numeric CVSS score where present, otherwise
+    from the scanner's categorical severity band. Critical and High
+    bands are both treated as high technical severity.
     """
+    band = cvss_score_to_band(finding.cvss_score)
+    if band is None:
+        band = finding.severity_band
+    if band in ("Critical", "High"):
+        return "high", band
+    if band == "Medium":
+        return "moderate", band
+    if band == "Low":
+        return "low", band
+    return None, band
 
-    path: list[str] = []
-    inputs_used: dict[str, object] = {"cvss_score": finding.cvss_score}
 
-    score_band = cvss_score_to_band(finding.cvss_score)
-    if score_band is not None:
-        path.append(f"score band {score_band} from CVSS {finding.cvss_score}")
-    else:
-        inputs_used["severity_band"] = finding.severity_band
-        score_band = finding.severity_band
-        if score_band is not None:
-            path.append(f"no numeric CVSS score; using scanner severity band '{score_band}'")
+def assess_preliminary_impact(finding: NormalisedFinding) -> TreeOutcome:
+    """Tree 2: preliminary impact from asset environment and technical severity.
 
-    if score_band is None:
-        path.append("neither a numeric CVSS score nor a scanner severity band was provided")
-        return TreeOutcome(value="Unknown", path=path, inputs_used=inputs_used)
+    This is a preliminary assessment, not a complete business-impact
+    rating. The source export carries no asset criticality, business
+    service, or data sensitivity, so the highest level reachable is
+    High. The asset environment is read directly rather than via an
+    environment-derived criticality proxy (ADR-0007).
+    """
+    tier, band = _technical_severity_tier(finding)
+    inputs_used: dict[str, object] = {
+        "asset_environment": finding.asset_environment,
+        "technical_severity": band,
+    }
 
-    inputs_used["asset_criticality"] = finding.asset_criticality
-    if finding.asset_criticality is None:
-        path.append("asset criticality not provided")
-        return TreeOutcome(value="Unknown", path=path, inputs_used=inputs_used)
+    if finding.asset_environment is None or tier is None:
+        return TreeOutcome(
+            value="Unknown",
+            path=["asset environment or technical severity not available"],
+            inputs_used=inputs_used,
+        )
 
-    impact = BUSINESS_IMPACT_MATRIX[score_band][finding.asset_criticality]
-    path.append(
-        f"severity band {score_band} × asset criticality {finding.asset_criticality} → {impact}"
+    production = finding.asset_environment.strip().lower() == "production"
+    env_label = "production" if production else "non-production"
+    value = (_PRODUCTION_IMPACT if production else _NONPRODUCTION_IMPACT)[tier]
+
+    return TreeOutcome(
+        value=value,
+        path=[
+            f"asset environment {env_label}; technical severity band {band}",
+            f"{env_label} asset with {band} severity → {value}",
+        ],
+        inputs_used=inputs_used,
     )
-    return TreeOutcome(value=impact, path=path, inputs_used=inputs_used)
 
 
 def assess_urgency(finding: NormalisedFinding, likelihood: TreeOutcome) -> TreeOutcome:
@@ -233,7 +248,7 @@ def evaluate(finding: NormalisedFinding) -> AbstractionResult:
     """Run all three trees for one finding."""
 
     likelihood = assess_exploitation_likelihood(finding)
-    impact = assess_business_impact(finding)
+    impact = assess_preliminary_impact(finding)
     urgency = assess_urgency(finding, likelihood)
     return AbstractionResult(
         exploitation_likelihood=likelihood,
