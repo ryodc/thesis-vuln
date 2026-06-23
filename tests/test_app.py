@@ -115,14 +115,6 @@ def test_finding_detail_unknown_role_is_404(client):
     assert response.status_code == 404
 
 
-def test_finding_object_returns_explanation_json(client):
-    response = client.get("/finding/0/object")
-
-    assert response.status_code == 200
-    payload = response.get_json()
-    assert "evidence_pointers" in payload
-    assert "vulnerability_id" in payload
-
 
 def test_pipeline_view_shows_all_three_stages(client):
     response = client.get("/finding/0/pipeline")
@@ -136,25 +128,6 @@ def test_pipeline_view_shows_all_three_stages(client):
     assert "Source format" in body
     assert "qualys_json" in body
 
-
-def test_export_technical_is_downloadable_text(client):
-    response = client.get("/finding/0/export?role=technical")
-
-    assert response.status_code == 200
-    assert response.mimetype == "text/plain"
-    assert "attachment" in response.headers["Content-Disposition"]
-    body = response.data.decode()
-    assert "CVE-2024-3094" in body
-    assert "Ratings and evidence" in body
-
-
-def test_export_nontechnical_excludes_cve_and_paths(client):
-    response = client.get("/finding/0/export?role=nontechnical")
-
-    assert response.status_code == 200
-    body = response.data.decode()
-    assert "CVE-2024-3094" not in body
-    assert "inputs used" not in body
 
 
 def test_upload_form_renders(client):

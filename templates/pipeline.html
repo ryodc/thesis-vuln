@@ -9,16 +9,14 @@
     <a href="/finding/{{ finding_id }}?role=technical">Technical</a>
     <a href="/finding/{{ finding_id }}?role=nontechnical">Non-technical</a>
     <a href="/finding/{{ finding_id }}/pipeline" class="active">Pipeline</a>
-    <a href="/finding/{{ finding_id }}/object">Raw object</a>
-    <a href="/finding/{{ finding_id }}/export?role=technical">Export (.txt)</a>
   </nav>
 
   <h1>{{ explanation.title or "Untitled finding" }}</h1>
-  <p class="page-intro">
+  <!-- <p class="page-intro">
     How this finding moved through the pipeline: ingestion normalised the raw
     record, abstraction traversed the three decision trees, and explanation
     assembled the object behind both stakeholder views.
-  </p>
+  </p> -->
 
   <section class="stage">
     <h2>Stage 1 &mdash; Ingestion</h2>

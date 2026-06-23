@@ -130,7 +130,7 @@ class ISDCsvParser(BaseParser):
             days_open=self._to_int(row.get("Age")),
             threshold_days=self._to_int(row.get("Threshold")),
             solution_text=self._strip_html(row.get("Solution")),
-            asset_id=None,
+            asset_id=self._clean(row.get("Asset Id")),
             hostname=None,
             operating_system=self._lower(row.get("Operating System")),
             asset_environment=asset_environment,

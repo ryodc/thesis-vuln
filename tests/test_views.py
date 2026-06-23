@@ -76,7 +76,6 @@ def test_role_toggle_links_use_finding_id():
 
     assert "/finding/3?role=nontechnical" in technical_html
     assert "/finding/3?role=technical" in nontechnical_html
-    assert "/finding/3/object" in technical_html
 
 
 def test_renderer_without_finding_id_omits_role_toggle():

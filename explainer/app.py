@@ -18,11 +18,11 @@ import itertools
 import json
 from pathlib import Path
 
-from flask import Flask, Response, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, redirect, render_template, request, url_for
 
 from explainer import abstraction, explanation
 from explainer.ingestion import PARSERS
-from explainer.views import RENDERERS, TEXT_RENDERERS, urgency_badge_class
+from explainer.views import RENDERERS, urgency_badge_class
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
@@ -175,33 +175,6 @@ def create_app() -> Flask:
             finding_id=finding_id,
             finding=dataclasses.asdict(row["finding"]),
             explanation=row["explanation"],
-        )
-
-    @app.route("/finding/<finding_id>/object")
-    def finding_object(finding_id: str):
-        row = findings_by_id.get(finding_id)
-        if row is None:
-            abort(404)
-
-        return jsonify(dataclasses.asdict(row["explanation"]))
-
-    @app.route("/finding/<finding_id>/export")
-    def finding_export(finding_id: str):
-        row = findings_by_id.get(finding_id)
-        if row is None:
-            abort(404)
-
-        role = request.args.get("role", "technical")
-        renderer = TEXT_RENDERERS.get(role)
-        if renderer is None:
-            abort(404)
-
-        body = renderer(row["explanation"])
-        filename = f"finding-{finding_id}-{role}.txt"
-        return Response(
-            body,
-            mimetype="text/plain",
-            headers={"Content-Disposition": f"attachment; filename={filename}"},
         )
 
     return app
