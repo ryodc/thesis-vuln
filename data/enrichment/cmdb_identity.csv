@@ -1,2 +1,5 @@
 ﻿identity_aad_id,identity_display_name,identity_domain,identity_email,identity_is_domain_admin,identity_is_privileged,identity_last_seen,identity_location,identity_source,identity_whencreated
 ereded-cas-43e-dscf45,Walter White,Company.com,walter_white@company.com,TRUE,TRUE,6/16/2026,Rotterdam,Active Directory,10/10/2008
+Unknown,Jesse Pinkman,Company.com,jesse_pinkman@company.com,FALSE,FALSE,6/16/2026,Albuquerque,Active Directory,01/01/2015
+Unknown,Gustavo Fring,Company.com,gustavo_fring@company.com,FALSE,TRUE,6/16/2026,Los Pollos Hermanos,Active Directory,01/01/2010
+Unknown,Mike Ehrmantraut,Company.com,mike_ehrmantraut@company.com,TRUE,TRUE,6/16/2026,Albuquerque,Active Directory,01/01/2012

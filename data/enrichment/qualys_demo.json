@@ -1,0 +1,25 @@
+{
+  "cve_id": "CVE-2021-44228",
+  "additional_cve_ids": ["CVE-2021-45046"],
+  "title": "Apache Log4j Remote Code Execution (Log4Shell)",
+  "severity": 5,
+  "cvss_score": 10.0,
+  "exploit_available": true,
+  "known_exploited": true,
+  "attack_vector": "NETWORK",
+  "patch_available": true,
+  "patch_release_date": "2021-12-10",
+  "last_scan_date": "2021-12-20",
+  "days_open": 10,
+  "threshold_days": 7,
+  "solution": "Upgrade Log4j to version 2.17.1 or later. As an immediate workaround, set the JVM property log4j2.formatMsgNoLookups=true or remove the JndiLookup class from the classpath.",
+  "status": "Active",
+  "asset": {
+    "id": "asset-web-prod-01",
+    "hostname": "web-api-prod-01",
+    "operating_system": "ubuntu 20.04",
+    "environment": "production",
+    "risk_score": 9.1,
+    "internet_facing": true
+  }
+}

@@ -69,6 +69,18 @@ def _asset_environment_label(finding: NormalisedFinding, value: object) -> str:
     return f"{value} (non-production) system"
 
 
+def _business_critical_label(finding: NormalisedFinding, value: object) -> str:
+    if value:
+        return "CMDB confirms this is a business-critical asset"
+    return "CMDB confirms this asset is not business-critical"
+
+
+def _owner_privileged_label(finding: NormalisedFinding, value: object) -> str:
+    if value:
+        return "the affected system is owned by a privileged identity, for example a domain administrator"
+    return "the affected system is not owned by a privileged identity"
+
+
 _FACTOR_LABEL_BUILDERS = {
     "asset_internet_facing": _internet_facing_label,
     "patch_available": _patch_available_label,
@@ -76,6 +88,8 @@ _FACTOR_LABEL_BUILDERS = {
     "known_exploited": _known_exploited_label,
     "asset_environment": _asset_environment_label,
     "asset_criticality": _asset_criticality_label,
+    "asset_business_critical": _business_critical_label,
+    "asset_owner_privileged": _owner_privileged_label,
 }
 
 _TOP_FACTOR_CAP = 3
@@ -265,11 +279,29 @@ def _limitations(finding: NormalisedFinding, abstraction: AbstractionResult) -> 
             f"{source} data source, so exploitation likelihood could not be assessed."
         )
 
-    if finding.source_format == "isd_csv" and finding.asset_environment is not None:
+    if (
+        finding.source_format == "isd_csv"
+        and finding.asset_environment is not None
+        and finding.asset_business_critical is None
+    ):
         sentences.append(
             "Impact is a preliminary assessment based on the asset environment and the "
             "scanner's categorical severity; asset criticality, business service, and data "
             "sensitivity were not available in the source."
+        )
+    elif (
+        finding.source_format == "isd_csv"
+        and finding.asset_environment is not None
+        and finding.asset_owner_privileged is not None
+    ):
+        sentences.append(
+            "Impact incorporates asset business criticality and asset owner privilege from "
+            "the asset inventory; data sensitivity was not available in the source."
+        )
+    elif finding.source_format == "isd_csv" and finding.asset_environment is not None:
+        sentences.append(
+            "Impact incorporates asset business criticality from the asset inventory; data "
+            "sensitivity was not available in the source."
         )
 
     if finding.vulnerability_id is None:

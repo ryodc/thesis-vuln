@@ -50,6 +50,15 @@ class NormalisedFinding:
     source_format: str
     absent_by_format: frozenset[str]
 
+    # asset business criticality, present when the asset resolved in the CMDB
+    # during ingestion; None when no asset record was available.
+    asset_business_critical: bool | None = None
+
+    # asset owner privilege, present when the owner resolved in the identity
+    # table during ingestion. Only the boolean is stored; the owner's name and
+    # email are never written onto the finding.
+    asset_owner_privileged: bool | None = None
+
 
 @dataclass(frozen=True)
 class TreeOutcome:

@@ -28,12 +28,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 SOURCE_FILES = [
-    ("qualys_json", DATA_DIR / "synthetic" / "scenario_a.json"),
-    ("qualys_json", DATA_DIR / "synthetic" / "scenario_b.json"),
-    ("qualys_json", DATA_DIR / "synthetic" / "scenario_c.json"),
-    ("isd_csv", DATA_DIR / "isd" / "scenario_a_terrapin.json"),
-    ("isd_csv", DATA_DIR / "isd" / "scenario_b_putty.json"),
-    ("isd_csv", DATA_DIR / "isd" / "scenario_c_python_eol.json"),
+    ("isd_csv", DATA_DIR / "enrichment" / "isd_synthetic.csv"),
+    ("qualys_json", DATA_DIR / "enrichment" / "qualys_demo.json"),
 ]
 
 URGENCY_ORDER = {"Immediate": 0, "Scheduled": 1, "Monitor": 2}
@@ -67,8 +63,12 @@ def create_app() -> Flask:
         new_ids = []
         for source_format, path in SOURCE_FILES:
             parser = PARSERS[source_format]
-            raw = json.loads(path.read_text(encoding="utf-8"))
-            raw_records = [raw] if source_format == "isd_csv" else raw
+            if path.suffix == ".csv":
+                with open(path, encoding="utf-8-sig", newline="") as f:
+                    raw_records = list(csv.DictReader(f))
+            else:
+                raw = json.loads(path.read_text(encoding="utf-8"))
+                raw_records = [raw] if source_format == "isd_csv" else raw
             for finding in parser.parse(raw_records):
                 new_ids.append(_register(finding))
         return new_ids

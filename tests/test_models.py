@@ -32,6 +32,8 @@ def _empty_finding(**overrides) -> NormalisedFinding:
         "last_scan_date": None,
         "source_format": "qualys_json",
         "absent_by_format": frozenset(),
+        "asset_business_critical": None,
+        "asset_owner_privileged": None,
     }
     fields.update(overrides)
     return NormalisedFinding(**fields)

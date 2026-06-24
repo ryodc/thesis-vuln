@@ -23,7 +23,6 @@ ALLOWED_IMPORTS = {
     "models": set(),
     "config": set(),
     "ingestion": {"models", "config"},
-    "enrichment": {"models"},
     "abstraction": {"models", "config"},
     "explanation": {"models", "config"},
     "views": {"models"},

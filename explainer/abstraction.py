@@ -19,6 +19,10 @@ from explainer.models import AbstractionResult, NormalisedFinding, TreeOutcome
 _PRODUCTION_IMPACT = {"high": "High", "moderate": "Medium", "low": "Low"}
 _NONPRODUCTION_IMPACT = {"high": "Medium", "moderate": "Low", "low": "Low"}
 
+# Complete impact when the asset is CMDB business-critical
+_CRITICAL_PRODUCTION_IMPACT = {"high": "Critical", "moderate": "High", "low": "Medium"}
+_CRITICAL_NONPRODUCTION_IMPACT = {"high": "High", "moderate": "Medium", "low": "Low"}
+
 
 def assess_exploitation_likelihood(finding: NormalisedFinding) -> TreeOutcome:
     """Tree 1: how likely is exploitation, based on exploit and exposure signals."""
@@ -90,13 +94,13 @@ def _technical_severity_tier(finding: NormalisedFinding) -> tuple[str | None, st
 
 
 def assess_preliminary_impact(finding: NormalisedFinding) -> TreeOutcome:
-    """Tree 2: preliminary impact from asset environment and technical severity.
+    """Tree 2: impact from asset environment and technical severity.
 
-    This is a preliminary assessment, not a complete business-impact
-    rating. The source export carries no asset criticality, business
-    service, or data sensitivity, so the highest level reachable is
-    High. The asset environment is read directly rather than via an
-    environment-derived criticality proxy (ADR-0007).
+    Preliminary mode (asset_business_critical is None): environment ×
+    severity, capped at High. No change to existing behaviour (ADR-0007).
+
+    Complete mode (asset_business_critical set by enrichment): same axes
+    but business-critical assets can reach Critical (ADR-0008).
     """
     tier, band = _technical_severity_tier(finding)
     inputs_used: dict[str, object] = {
@@ -113,13 +117,47 @@ def assess_preliminary_impact(finding: NormalisedFinding) -> TreeOutcome:
 
     production = finding.asset_environment.strip().lower() == "production"
     env_label = "production" if production else "non-production"
-    value = (_PRODUCTION_IMPACT if production else _NONPRODUCTION_IMPACT)[tier]
+
+    if finding.asset_business_critical is None:
+        value = (_PRODUCTION_IMPACT if production else _NONPRODUCTION_IMPACT)[tier]
+        return TreeOutcome(
+            value=value,
+            path=[
+                f"asset environment {env_label}; technical severity band {band}",
+                f"{env_label} asset with {band} severity → {value}",
+            ],
+            inputs_used=inputs_used,
+        )
+
+    inputs_used["asset_business_critical"] = finding.asset_business_critical
+    if finding.asset_owner_privileged is not None:
+        inputs_used["asset_owner_privileged"] = finding.asset_owner_privileged
+
+    business_critical = finding.asset_business_critical is True
+    owner_privileged = finding.asset_owner_privileged is True
+    elevated = business_critical or owner_privileged
+
+    impact_map = (
+        (_CRITICAL_PRODUCTION_IMPACT if production else _CRITICAL_NONPRODUCTION_IMPACT)
+        if elevated
+        else (_PRODUCTION_IMPACT if production else _NONPRODUCTION_IMPACT)
+    )
+    value = impact_map[tier]
+
+    if business_critical and owner_privileged:
+        descriptor = f"business-critical {env_label} asset owned by a privileged identity"
+    elif business_critical:
+        descriptor = f"business-critical {env_label} asset"
+    elif owner_privileged:
+        descriptor = f"{env_label} asset owned by a privileged identity"
+    else:
+        descriptor = f"non-business-critical {env_label} asset"
 
     return TreeOutcome(
         value=value,
         path=[
             f"asset environment {env_label}; technical severity band {band}",
-            f"{env_label} asset with {band} severity → {value}",
+            f"complete impact: {descriptor} with {band} severity → {value}",
         ],
         inputs_used=inputs_used,
     )

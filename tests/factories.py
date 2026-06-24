@@ -29,6 +29,8 @@ _DEFAULTS = {
     "last_scan_date": None,
     "source_format": "qualys_json",
     "absent_by_format": frozenset(),
+    "asset_business_critical": None,
+    "asset_owner_privileged": None,
 }
 
 

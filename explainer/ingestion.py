@@ -9,10 +9,12 @@ where a finding came from beyond `source_format` and
 
 from __future__ import annotations
 
+import csv
 import html
 import re
 from abc import ABC, abstractmethod
 from datetime import date, datetime
+from pathlib import Path
 
 from explainer.config import THRESHOLDS, cvss_score_to_band, risk_score_to_criticality
 from explainer.models import NormalisedFinding
@@ -29,6 +31,56 @@ ISD_ABSENT_FIELDS = frozenset(
         "hostname",
     }
 )
+
+
+def _truthy(value: str | None) -> bool:
+    return (value or "").strip().lower() in {"true", "yes", "1"}
+
+
+def _exposure_to_internet_facing(asset: dict) -> bool:
+    return (
+        (asset.get("asset_exposure") or "").strip().lower() == "external"
+        or _truthy(asset.get("asset_is_on_external_dns"))
+        or _truthy(asset.get("asset_is_extranet_exposed"))
+    )
+
+
+def _load_asset_lookup() -> dict[str, dict]:
+    path = Path(__file__).resolve().parent.parent / "data" / "enrichment" / "cmdb_asset.csv"
+    try:
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            return {
+                row["asset_id"].strip(): row
+                for row in csv.DictReader(f)
+                if row.get("asset_id", "").strip()
+            }
+    except FileNotFoundError:
+        return {}
+
+
+CMDB_ASSET_LOOKUP = _load_asset_lookup()
+
+
+def _owner_is_privileged(identity: dict) -> bool:
+    return _truthy(identity.get("identity_is_domain_admin")) or _truthy(
+        identity.get("identity_is_privileged")
+    )
+
+
+def _load_identity_lookup() -> dict[str, dict]:
+    path = Path(__file__).resolve().parent.parent / "data" / "enrichment" / "cmdb_identity.csv"
+    try:
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            return {
+                row["identity_email"].strip().lower(): row
+                for row in csv.DictReader(f)
+                if row.get("identity_email", "").strip()
+            }
+    except FileNotFoundError:
+        return {}
+
+
+CMDB_IDENTITY_LOOKUP = _load_identity_lookup()
 
 
 class BaseParser(ABC):
@@ -114,6 +166,27 @@ class ISDCsvParser(BaseParser):
     def _parse_row(self, row: dict) -> NormalisedFinding:
         vulnerability_id, additional_cve_ids = self._split_cve_ids(row.get("CVE ID", ""))
         asset_environment = self._clean(row.get("Asset Environment"))
+        asset_id = self._clean(row.get("Asset Id"))
+
+        # Asset context defaults to the ISD row's own signals.
+        asset_internet_facing = self._yes_no(row.get("Remote Discovery"))
+        asset_business_critical = None
+
+        # If the asset identifier resolves in the CMDB, that record is the
+        # authoritative source for exposure and business criticality.
+        asset = CMDB_ASSET_LOOKUP.get(asset_id) if asset_id else None
+        asset_owner_privileged = None
+        if asset is not None:
+            asset_internet_facing = _exposure_to_internet_facing(asset)
+            asset_business_critical = _truthy(asset.get("asset_is_business_critical"))
+
+            # Owner criticality is a mandatory impact input. Resolve the asset
+            # owner in the identity table and lift only the privilege flag onto
+            # the finding. The owner's name and email are never stored.
+            owner_email = (asset.get("asset_owner") or "").strip().lower()
+            identity = CMDB_IDENTITY_LOOKUP.get(owner_email) if owner_email else None
+            if identity is not None:
+                asset_owner_privileged = _owner_is_privileged(identity)
 
         return NormalisedFinding(
             vulnerability_id=vulnerability_id,
@@ -130,16 +203,18 @@ class ISDCsvParser(BaseParser):
             days_open=self._to_int(row.get("Age")),
             threshold_days=self._to_int(row.get("Threshold")),
             solution_text=self._strip_html(row.get("Solution")),
-            asset_id=self._clean(row.get("Asset Id")),
+            asset_id=asset_id,
             hostname=None,
             operating_system=self._lower(row.get("Operating System")),
             asset_environment=asset_environment,
             asset_criticality=self._criticality_from_environment(asset_environment),
-            asset_internet_facing=self._yes_no(row.get("Remote Discovery")),
+            asset_internet_facing=asset_internet_facing,
             status=self._clean(row.get("Issue Status")),
             last_scan_date=self._to_iso_date(row.get("Last Scan Date")),
             source_format=self.source_format,
             absent_by_format=self.absent_by_format,
+            asset_business_critical=asset_business_critical,
+            asset_owner_privileged=asset_owner_privileged,
         )
 
     @staticmethod
