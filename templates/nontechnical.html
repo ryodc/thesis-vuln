@@ -14,9 +14,32 @@
   {% endif %}
 
   <h1>{{ explanation.title or "Security finding" }}</h1>
+
+  {# System context line — one line, no jargon #}
+  {% set td = explanation.technical_detail %}
+  {% if td.hostname or td.operating_system or td.asset_environment %}
+  <p class="system-context">
+    {%- if td.hostname %}<strong>{{ td.hostname }}</strong>{% endif %}
+    {%- if td.operating_system %} &middot; {{ td.operating_system }}{% endif %}
+    {%- if td.asset_environment %} &middot; {{ td.asset_environment }}{% endif %}
+  </p>
+  {% endif %}
+
   <p class="badge {{ badge_class }}">{{ explanation.urgency | upper }}</p>
 
   <p class="risk-summary">{{ explanation.risk_summary }}</p>
+
+  {# CMDB context — only shown when the asset inventory added something meaningful #}
+  {% if td.asset_business_critical or td.asset_owner_privileged %}
+  <p class="cmdb-context">
+    {% if td.asset_business_critical %}
+      This system is flagged as business-critical in the asset inventory.
+    {% endif %}
+    {% if td.asset_owner_privileged %}
+      It is managed by a privileged account (domain administrator) &mdash; a successful attack could give an attacker elevated control over the wider environment.
+    {% endif %}
+  </p>
+  {% endif %}
 
   <section class="consequence">
     <h2>What could happen</h2>
@@ -42,5 +65,6 @@
     <p>{{ explanation.limitations }}</p>
   </section>
   {% endif %}
+
 </article>
 {% endblock %}

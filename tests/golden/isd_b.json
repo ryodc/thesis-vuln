@@ -1,18 +1,30 @@
 {
-  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability.",
-  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "vulnerability_id": "CVE-2024-31497",
+  "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 30 days, within the 90-day threshold. How likely exploitation is could not be determined from the available data.",
   "certainty_level": "Known uncertainty",
-  "evidence_pointers": {
-    "business_impact": {
-      "inputs": {
-        "asset_environment": "production",
-        "technical_severity": "High"
-      },
-      "path": [
-        "asset environment production; technical severity band High",
-        "production asset with High severity \u2192 High"
-      ]
+  "top_factors": [
+    {
+      "label": "the affected system is not reachable from the internet",
+      "field": "asset_internet_facing",
+      "value": false
     },
+    {
+      "label": "open 30 days, within the 90-day threshold",
+      "field": "days_open",
+      "value": 30
+    },
+    {
+      "label": "a vendor patch is available",
+      "field": "patch_available",
+      "value": true
+    }
+  ],
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "urgency": "Scheduled",
+  "time_horizon": "Include this finding in the next planned remediation cycle.",
+  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability.",
+  "mitigation": null,
+  "evidence_pointers": {
     "exploitation_likelihood": {
       "inputs": {
         "exploit_available": null
@@ -21,55 +33,46 @@
         "exploit availability not provided by source"
       ]
     },
+    "business_impact": {
+      "inputs": {
+        "asset_environment": "production",
+        "technical_severity": "High"
+      },
+      "path": [
+        "asset environment production; technical severity band High",
+        "production asset with High severity → High"
+      ]
+    },
     "urgency": {
       "inputs": {
+        "exploitation_likelihood": "Unknown",
         "asset_internet_facing": false,
         "days_open": 30,
-        "exploitation_likelihood": "Unknown",
-        "patch_available": true,
-        "threshold_days": 90
+        "threshold_days": 90,
+        "patch_available": true
       },
       "path": [
         "exploitation likelihood unknown",
-        "a fix exists and should enter the next remediation cycle \u2192 Scheduled"
+        "a fix exists and should enter the next remediation cycle → Scheduled"
       ]
     }
   },
   "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. The system does not determine asset ownership or final remediation decisions.",
-  "mitigation": null,
-  "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 30 days, within the 90-day threshold. How likely exploitation is could not be determined from the available data.",
+  "title": "Putty (Pageant) Secret Keys Disclosure Vulnerability (CVE-2024-31497)",
   "technical_detail": {
-    "additional_cve_ids": [],
-    "asset_environment": "production",
+    "exploitation_likelihood": "Unknown",
     "business_impact": "High",
     "cvss_score": null,
-    "days_open": 30,
-    "exploitation_likelihood": "Unknown",
-    "operating_system": "windows server 2019 standard",
     "severity_band": "High",
-    "solution_text": "Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability. Patch: Following are links for downloading patches to fix the vulnerabilities: Putty 0.81",
     "status": "Active",
-    "threshold_days": 90
-  },
-  "time_horizon": "Include this finding in the next planned remediation cycle.",
-  "title": "Putty (Pageant) Secret Keys Disclosure Vulnerability (CVE-2024-31497)",
-  "top_factors": [
-    {
-      "field": "asset_internet_facing",
-      "label": "the affected system is not reachable from the internet",
-      "value": false
-    },
-    {
-      "field": "days_open",
-      "label": "open 30 days, within the 90-day threshold",
-      "value": 30
-    },
-    {
-      "field": "patch_available",
-      "label": "a vendor patch is available",
-      "value": true
-    }
-  ],
-  "urgency": "Scheduled",
-  "vulnerability_id": "CVE-2024-31497"
+    "hostname": null,
+    "operating_system": "windows server 2019 standard",
+    "asset_environment": "production",
+    "asset_business_critical": null,
+    "asset_owner_privileged": null,
+    "days_open": 30,
+    "threshold_days": 90,
+    "solution_text": "Customers are advised to upgrade to latest version PuTTY 0.81 in order to remediate this vulnerability. Patch: Following are links for downloading patches to fix the vulnerabilities: Putty 0.81",
+    "additional_cve_ids": []
+  }
 }

@@ -176,6 +176,22 @@ dd.highlight {
   font-size: 1.1rem;
 }
 
+.system-context {
+  color: #52606d;
+  font-size: 0.9rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cmdb-context {
+  background: #fef9e7;
+  border-left: 4px solid #d68910;
+  padding: 0.6rem 1rem;
+  margin: 0.75rem 0 1rem;
+  font-size: 0.95rem;
+  border-radius: 0 4px 4px 0;
+}
+
 .limitations {
   border-top: 1px solid #e4e7eb;
   padding-top: 1rem;
@@ -277,6 +293,26 @@ dd.highlight {
 .callout-neutral {
   border-color: #7b8794;
   background: #f4f6f7;
+}
+
+.toggle-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #cbd2d9;
+  border-radius: 50%;
+  background: #f0f4f8;
+  color: #52606d;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.toggle-btn:hover {
+  background: #e4e7eb;
+  color: #1f2933;
 }
 
 .pipeline-quote {

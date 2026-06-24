@@ -1,18 +1,30 @@
 {
-  "action": "No direct patch is available. The vendor's recommended remediation: Customers are advised to upgrade to the latest supported python releases to remediate this vulnerability.",
-  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "vulnerability_id": null,
+  "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 967 days, 877 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
   "certainty_level": "Unknowable",
-  "evidence_pointers": {
-    "business_impact": {
-      "inputs": {
-        "asset_environment": "production",
-        "technical_severity": "High"
-      },
-      "path": [
-        "asset environment production; technical severity band High",
-        "production asset with High severity \u2192 High"
-      ]
+  "top_factors": [
+    {
+      "label": "the affected system is not reachable from the internet",
+      "field": "asset_internet_facing",
+      "value": false
     },
+    {
+      "label": "open 967 days, 877 days past the 90-day threshold",
+      "field": "days_open",
+      "value": 967
+    },
+    {
+      "label": "production system",
+      "field": "asset_environment",
+      "value": "production"
+    }
+  ],
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "urgency": "Scheduled",
+  "time_horizon": "Include this finding in the next planned remediation cycle.",
+  "action": "No direct patch is available. The vendor's recommended remediation: Customers are advised to upgrade to the latest supported python releases to remediate this vulnerability.",
+  "mitigation": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system.",
+  "evidence_pointers": {
     "exploitation_likelihood": {
       "inputs": {
         "exploit_available": null
@@ -21,54 +33,45 @@
         "exploit availability not provided by source"
       ]
     },
+    "business_impact": {
+      "inputs": {
+        "asset_environment": "production",
+        "technical_severity": "High"
+      },
+      "path": [
+        "asset environment production; technical severity band High",
+        "production asset with High severity → High"
+      ]
+    },
     "urgency": {
       "inputs": {
+        "exploitation_likelihood": "Unknown",
         "asset_internet_facing": false,
         "days_open": 967,
-        "exploitation_likelihood": "Unknown",
         "threshold_days": 90
       },
       "path": [
         "exploitation likelihood unknown",
-        "finding exceeds the 90-day remediation threshold \u2192 Scheduled"
+        "finding exceeds the 90-day remediation threshold → Scheduled"
       ]
     }
   },
   "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. No CVE identifier is associated with this finding; it was detected as end-of-life or misconfigured software. The system does not determine asset ownership or final remediation decisions.",
-  "mitigation": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system.",
-  "risk_summary": "This vulnerability carries Scheduled urgency because the affected system is not reachable from the internet and open 967 days, 877 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
+  "title": "EOL/Obsolete Software: Python 3.7.x Detected",
   "technical_detail": {
-    "additional_cve_ids": [],
-    "asset_environment": "production",
+    "exploitation_likelihood": "Unknown",
     "business_impact": "High",
     "cvss_score": null,
-    "days_open": 967,
-    "exploitation_likelihood": "Unknown",
-    "operating_system": "windows server 2019 standard",
     "severity_band": "High",
-    "solution_text": "Customers are advised to upgrade to the latest supported python releases to remediate this vulnerability. For latest release visit here.",
     "status": "Reopened",
-    "threshold_days": 90
-  },
-  "time_horizon": "Include this finding in the next planned remediation cycle.",
-  "title": "EOL/Obsolete Software: Python 3.7.x Detected",
-  "top_factors": [
-    {
-      "field": "asset_internet_facing",
-      "label": "the affected system is not reachable from the internet",
-      "value": false
-    },
-    {
-      "field": "days_open",
-      "label": "open 967 days, 877 days past the 90-day threshold",
-      "value": 967
-    },
-    {
-      "field": "asset_environment",
-      "label": "production system",
-      "value": "production"
-    }
-  ],
-  "urgency": "Scheduled",
-  "vulnerability_id": null
+    "hostname": null,
+    "operating_system": "windows server 2019 standard",
+    "asset_environment": "production",
+    "asset_business_critical": null,
+    "asset_owner_privileged": null,
+    "days_open": 967,
+    "threshold_days": 90,
+    "solution_text": "Customers are advised to upgrade to the latest supported python releases to remediate this vulnerability. For latest release visit here.",
+    "additional_cve_ids": []
+  }
 }

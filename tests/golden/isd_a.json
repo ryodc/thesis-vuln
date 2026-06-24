@@ -1,18 +1,30 @@
 {
-  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Customers are advised to refer to the individual vendor advisory for their operating system and install the patch released by the vendor.",
-  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "vulnerability_id": "CVE-2023-48795",
+  "risk_summary": "This vulnerability carries Immediate urgency because the affected system is reachable from the internet and open 893 days, 803 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
   "certainty_level": "Known uncertainty",
-  "evidence_pointers": {
-    "business_impact": {
-      "inputs": {
-        "asset_environment": "production",
-        "technical_severity": "High"
-      },
-      "path": [
-        "asset environment production; technical severity band High",
-        "production asset with High severity \u2192 High"
-      ]
+  "top_factors": [
+    {
+      "label": "the affected system is reachable from the internet",
+      "field": "asset_internet_facing",
+      "value": true
     },
+    {
+      "label": "open 893 days, 803 days past the 90-day threshold",
+      "field": "days_open",
+      "value": 893
+    },
+    {
+      "label": "production system",
+      "field": "asset_environment",
+      "value": "production"
+    }
+  ],
+  "business_consequence": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+  "urgency": "Immediate",
+  "time_horizon": "Action should begin within the current working week; escalate if remediation cannot start promptly.",
+  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Customers are advised to refer to the individual vendor advisory for their operating system and install the patch released by the vendor.",
+  "mitigation": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
+  "evidence_pointers": {
     "exploitation_likelihood": {
       "inputs": {
         "exploit_available": null
@@ -21,54 +33,45 @@
         "exploit availability not provided by source"
       ]
     },
+    "business_impact": {
+      "inputs": {
+        "asset_environment": "production",
+        "technical_severity": "High"
+      },
+      "path": [
+        "asset environment production; technical severity band High",
+        "production asset with High severity → High"
+      ]
+    },
     "urgency": {
       "inputs": {
+        "exploitation_likelihood": "Unknown",
         "asset_internet_facing": true,
         "days_open": 893,
-        "exploitation_likelihood": "Unknown",
         "threshold_days": 90
       },
       "path": [
         "exploitation likelihood unknown",
-        "asset is internet-facing and the finding is 803 days past the 90-day remediation threshold \u2192 Immediate"
+        "asset is internet-facing and the finding is 803 days past the 90-day remediation threshold → Immediate"
       ]
     }
   },
   "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. The system does not determine asset ownership or final remediation decisions.",
-  "mitigation": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
-  "risk_summary": "This vulnerability carries Immediate urgency because the affected system is reachable from the internet and open 893 days, 803 days past the 90-day threshold. How likely exploitation is could not be determined from the available data.",
+  "title": "SSH Prefix Truncation Vulnerability (Terrapin)",
   "technical_detail": {
-    "additional_cve_ids": [],
-    "asset_environment": "production",
+    "exploitation_likelihood": "Unknown",
     "business_impact": "High",
     "cvss_score": null,
-    "days_open": 893,
-    "exploitation_likelihood": "Unknown",
-    "operating_system": "ubuntu 18.04",
     "severity_band": "High",
-    "solution_text": "Customers are advised to refer to the individual vendor advisory for their operating system and install the patch released by the vendor. For more information regarding the vulnerability, please refer to Terrapin Vulnerability Patch: Following are links for downloading patches to fix the vulnerabilities: OpenWall Security Advisory",
     "status": "Reopened",
-    "threshold_days": 90
-  },
-  "time_horizon": "Action should begin within the current working week; escalate if remediation cannot start promptly.",
-  "title": "SSH Prefix Truncation Vulnerability (Terrapin)",
-  "top_factors": [
-    {
-      "field": "asset_internet_facing",
-      "label": "the affected system is reachable from the internet",
-      "value": true
-    },
-    {
-      "field": "days_open",
-      "label": "open 893 days, 803 days past the 90-day threshold",
-      "value": 893
-    },
-    {
-      "field": "asset_environment",
-      "label": "production system",
-      "value": "production"
-    }
-  ],
-  "urgency": "Immediate",
-  "vulnerability_id": "CVE-2023-48795"
+    "hostname": null,
+    "operating_system": "ubuntu 18.04",
+    "asset_environment": "production",
+    "asset_business_critical": null,
+    "asset_owner_privileged": null,
+    "days_open": 893,
+    "threshold_days": 90,
+    "solution_text": "Customers are advised to refer to the individual vendor advisory for their operating system and install the patch released by the vendor. For more information regarding the vulnerability, please refer to Terrapin Vulnerability Patch: Following are links for downloading patches to fix the vulnerabilities: OpenWall Security Advisory",
+    "additional_cve_ids": []
+  }
 }

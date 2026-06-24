@@ -1,18 +1,30 @@
 {
-  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Update the CI agent package to version 2.3.4 or later and restart the agent service.",
-  "business_consequence": "If exploited, this vulnerability could give an attacker a foothold on an internal system, which could be used as a step towards more sensitive systems.",
+  "vulnerability_id": "CVE-2024-5021",
+  "risk_summary": "This vulnerability carries Scheduled urgency because a vendor patch is available and open 95 days, 5 days past the 90-day threshold.",
   "certainty_level": "Unknown uncertainty",
-  "evidence_pointers": {
-    "business_impact": {
-      "inputs": {
-        "asset_environment": "development",
-        "technical_severity": "High"
-      },
-      "path": [
-        "asset environment non-production; technical severity band High",
-        "non-production asset with High severity \u2192 Medium"
-      ]
+  "top_factors": [
+    {
+      "label": "a vendor patch is available",
+      "field": "patch_available",
+      "value": true
     },
+    {
+      "label": "open 95 days, 5 days past the 90-day threshold",
+      "field": "days_open",
+      "value": 95
+    },
+    {
+      "label": "no public exploit is currently known for this vulnerability",
+      "field": "exploit_available",
+      "value": false
+    }
+  ],
+  "business_consequence": "If exploited, this vulnerability could give an attacker a foothold on an internal system, which could be used as a step towards more sensitive systems.",
+  "urgency": "Scheduled",
+  "time_horizon": "Include this finding in the next planned remediation cycle.",
+  "action": "Apply the available security update for the affected system. The vendor's recommended remediation: Update the CI agent package to version 2.3.4 or later and restart the agent service.",
+  "mitigation": null,
+  "evidence_pointers": {
     "exploitation_likelihood": {
       "inputs": {
         "exploit_available": false,
@@ -22,54 +34,45 @@
         "no public exploit available and no known exploitation"
       ]
     },
+    "business_impact": {
+      "inputs": {
+        "asset_environment": "development",
+        "technical_severity": "High"
+      },
+      "path": [
+        "asset environment non-production; technical severity band High",
+        "non-production asset with High severity → Medium"
+      ]
+    },
     "urgency": {
       "inputs": {
-        "days_open": 95,
         "exploitation_likelihood": "Low",
         "patch_available": true,
+        "days_open": 95,
         "threshold_days": 90
       },
       "path": [
         "exploitation likelihood is Low",
-        "a patch is available and the finding is 5 days past the 90-day remediation threshold \u2192 Scheduled"
+        "a patch is available and the finding is 5 days past the 90-day remediation threshold → Scheduled"
       ]
     }
   },
   "limitations": null,
-  "mitigation": null,
-  "risk_summary": "This vulnerability carries Scheduled urgency because a vendor patch is available and open 95 days, 5 days past the 90-day threshold.",
+  "title": "Remote Code Execution in Internal CI Agent",
   "technical_detail": {
-    "additional_cve_ids": [],
-    "asset_environment": "development",
+    "exploitation_likelihood": "Low",
     "business_impact": "Medium",
     "cvss_score": 8.5,
-    "days_open": 95,
-    "exploitation_likelihood": "Low",
-    "operating_system": "ubuntu 22.04",
     "severity_band": "High",
-    "solution_text": "Update the CI agent package to version 2.3.4 or later and restart the agent service.",
     "status": "Active",
-    "threshold_days": null
-  },
-  "time_horizon": "Include this finding in the next planned remediation cycle.",
-  "title": "Remote Code Execution in Internal CI Agent",
-  "top_factors": [
-    {
-      "field": "patch_available",
-      "label": "a vendor patch is available",
-      "value": true
-    },
-    {
-      "field": "days_open",
-      "label": "open 95 days, 5 days past the 90-day threshold",
-      "value": 95
-    },
-    {
-      "field": "exploit_available",
-      "label": "no public exploit is currently known for this vulnerability",
-      "value": false
-    }
-  ],
-  "urgency": "Scheduled",
-  "vulnerability_id": "CVE-2024-5021"
+    "hostname": "ci-runner-07",
+    "operating_system": "ubuntu 22.04",
+    "asset_environment": "development",
+    "asset_business_critical": null,
+    "asset_owner_privileged": null,
+    "days_open": 95,
+    "threshold_days": null,
+    "solution_text": "Update the CI agent package to version 2.3.4 or later and restart the agent service.",
+    "additional_cve_ids": []
+  }
 }
