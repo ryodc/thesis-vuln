@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ explanation.vulnerability_id or explanation.title or "Finding" }} - Pipeline{% endblock %}
+{% block title %}{{ explanation.vulnerability_id or explanation.title or "Finding" }} &mdash; Pipeline{% endblock %}
 
 {% block content %}
 <article class="finding pipeline-view">
@@ -12,97 +12,427 @@
   </nav>
 
   <h1>{{ explanation.title or "Untitled finding" }}</h1>
-  <!-- <p class="page-intro">
-    How this finding moved through the pipeline: ingestion normalised the raw
-    record, abstraction traversed the three decision trees, and explanation
-    assembled the object behind both stakeholder views.
-  </p> -->
+  <p class="stage-intro">
+    This page traces how a raw source record became a stakeholder explanation,
+    one layer at a time. Each section shows what data entered, what happened to it,
+    and why the system made the choice it did.
+  </p>
 
+  {# ───────────────────────────────────────────────────────────────────────────
+     STAGE 1 — INGESTION
+  ─────────────────────────────────────────────────────────────────────────── #}
   <section class="stage">
     <h2>Stage 1 &mdash; Ingestion</h2>
-    <p class="certainty">
-      Source format: <code>{{ finding.source_format }}</code>
-      &mdash; fields this source can never provide:
-      {% if finding.absent_by_format %}
-        {{ finding.absent_by_format | join(", ") }}
-      {% else %}
-        none
-      {% endif %}
+    <p class="stage-intro">
+      Ingestion reads the raw source record and maps every field to a fixed,
+      source-independent schema called <strong>NormalisedFinding</strong>.
+      This is the only layer that knows Qualys field names, ISD column names,
+      or date formats. Everything downstream receives the same struct regardless
+      of where the finding came from.
     </p>
-    <dl>
-      {% for key, value in finding.items() %}
-      {% if key not in ("source_format", "absent_by_format") %}
-      <dt>{{ key }}</dt>
-      <dd>{{ value if value is not none else "Unknown" }}</dd>
-      {% endif %}
-      {% endfor %}
-    </dl>
+
+    <div class="field-group">
+      <h4>Source provenance</h4>
+      <dl>
+        <dt>source_format</dt>
+        <dd><code>{{ finding.source_format }}</code></dd>
+        <dt>absent_by_format</dt>
+        <dd>
+          {% if finding.absent_by_format %}
+            <code>{{ finding.absent_by_format | join(", ") }}</code>
+            <span class="derived-note">fields this source format can structurally never provide — used by the certainty check</span>
+          {% else %}
+            <em>none &mdash; this source provides all pipeline fields</em>
+          {% endif %}
+        </dd>
+      </dl>
+    </div>
+
+    <div class="field-group">
+      <h4>Vulnerability identity</h4>
+      <dl>
+        <dt>vulnerability_id</dt>
+        <dd>{{ finding.vulnerability_id or "&mdash;" }}</dd>
+        <dt>title</dt>
+        <dd>{{ finding.title or "&mdash;" }}</dd>
+        {% if finding.additional_cve_ids %}
+        <dt>additional_cve_ids</dt>
+        <dd>{{ finding.additional_cve_ids | join(", ") }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="field-group">
+      <h4>Severity signals</h4>
+      <dl>
+        <dt>cvss_score</dt>
+        <dd>{{ finding.cvss_score if finding.cvss_score is not none else "not provided" }}</dd>
+        <dt>severity_band</dt>
+        <dd>
+          {{ finding.severity_band or "not provided" }}
+          {% if finding.cvss_score is not none %}
+            <span class="derived-note">derived from cvss_score using NVD thresholds (≥9.0 Critical, ≥7.0 High, ≥4.0 Medium)</span>
+          {% endif %}
+        </dd>
+        <dt>exploit_available</dt>
+        <dd>{{ finding.exploit_available if finding.exploit_available is not none else "not provided" }}</dd>
+        <dt>known_exploited</dt>
+        <dd>{{ finding.known_exploited if finding.known_exploited is not none else "not provided" }}</dd>
+        <dt>attack_vector</dt>
+        <dd>{{ finding.attack_vector or "not provided" }}</dd>
+      </dl>
+    </div>
+
+    <div class="field-group">
+      <h4>Asset context</h4>
+      <dl>
+        <dt>asset_environment</dt>
+        <dd>{{ finding.asset_environment or "not provided" }}</dd>
+        <dt>asset_internet_facing</dt>
+        <dd>{{ finding.asset_internet_facing if finding.asset_internet_facing is not none else "not provided" }}</dd>
+        <dt>asset_criticality</dt>
+        <dd>
+          {{ finding.asset_criticality or "not provided" }}
+          {% if finding.asset_criticality %}
+            <span class="derived-note">derived from asset risk score during ingestion</span>
+          {% endif %}
+        </dd>
+        <dt>asset_business_critical</dt>
+        <dd>
+          {% if finding.asset_business_critical is none %}
+            not provided
+            <span class="derived-note">no CMDB asset record matched the asset identifier — impact stays on the preliminary path</span>
+          {% else %}
+            {{ finding.asset_business_critical }}
+            <span class="derived-note">resolved from the CMDB asset table during ingestion</span>
+          {% endif %}
+        </dd>
+        <dt>asset_owner_privileged</dt>
+        <dd>
+          {% if finding.asset_owner_privileged is none %}
+            not provided
+            <span class="derived-note">no identity record matched the asset owner, or no CMDB asset was found</span>
+          {% else %}
+            {{ finding.asset_owner_privileged }}
+            <span class="derived-note">resolved from the CMDB identity table during ingestion; the owner&rsquo;s email is not stored</span>
+          {% endif %}
+        </dd>
+      </dl>
+    </div>
+
+    <div class="field-group">
+      <h4>Remediation signals</h4>
+      <dl>
+        <dt>patch_available</dt>
+        <dd>{{ finding.patch_available if finding.patch_available is not none else "not provided" }}</dd>
+        <dt>days_open</dt>
+        <dd>{{ finding.days_open if finding.days_open is not none else "not provided" }}</dd>
+        <dt>threshold_days</dt>
+        <dd>
+          {% if finding.threshold_days is not none %}
+            {{ finding.threshold_days }}
+          {% else %}
+            not provided <span class="derived-note">default of 90 days applies</span>
+          {% endif %}
+        </dd>
+        {% if finding.patch_age_days is not none %}
+        <dt>patch_age_days</dt>
+        <dd>{{ finding.patch_age_days }} days
+          <span class="derived-note">derived from patch_release_date vs last_scan_date during ingestion</span>
+        </dd>
+        {% endif %}
+      </dl>
+    </div>
   </section>
 
-  <section class="stage">
-    <h2>Stage 2 &mdash; Abstraction (decision trees)</h2>
+  {# ───────────────────────────────────────────────────────────────────────────
+     STAGE 2 — ABSTRACTION
+  ─────────────────────────────────────────────────────────────────────────── #}
 
-    <h3>Exploitation likelihood &rarr; {{ explanation.technical_detail.exploitation_likelihood }}</h3>
+  {% set ll  = explanation.technical_detail.exploitation_likelihood %}
+  {% set bi  = explanation.technical_detail.business_impact %}
+  {% set el_inputs  = explanation.evidence_pointers.exploitation_likelihood.inputs %}
+  {% set bi_inputs  = explanation.evidence_pointers.business_impact.inputs %}
+  {% set urg_inputs = explanation.evidence_pointers.urgency.inputs %}
+
+  <section class="stage">
+    <h2>Stage 2 &mdash; Abstraction</h2>
+    <p class="stage-intro">
+      Three independent decision procedures each read a subset of the NormalisedFinding
+      and produce a rated value plus a trace: the branches taken and the fields read.
+      No text is produced here &mdash; only structured outcomes that the next layer will narrate.
+    </p>
+
+    {# ── Tree 1: Exploitation likelihood ─────────────────────────────────── #}
+    <h3>Tree 1 &mdash; Exploitation likelihood &rarr; <strong>{{ ll }}</strong></h3>
+    <p class="stage-intro">
+      Asks: given what is publicly known about this vulnerability and asset, how likely is it that
+      an attacker can exploit it? Reads <code>exploit_available</code>, <code>known_exploited</code>,
+      and <code>asset_internet_facing</code>.
+    </p>
     <ol class="tree-path">
       {% for step in explanation.evidence_pointers.exploitation_likelihood.path %}
       <li>{{ step }}</li>
       {% endfor %}
     </ol>
-    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.exploitation_likelihood.inputs }}</p>
 
-    <h3>Preliminary impact &rarr; {{ explanation.technical_detail.business_impact }}</h3>
+    {% if ll == "Unknown" %}
+    <div class="pipeline-callout callout-neutral">
+      <strong>Why Unknown?</strong>
+      <code>exploit_available</code> is listed in <code>absent_by_format</code> for
+      <code>{{ finding.source_format }}</code>. The tree detected a missing required field
+      and returned Unknown immediately without reading any further field. This is a structural
+      limit of the source format, not a data quality problem.
+    </div>
+    {% elif ll == "High" and el_inputs.known_exploited %}
+    <div class="pipeline-callout callout-critical">
+      <strong>Why High?</strong>
+      Both <code>exploit_available = True</code> and <code>known_exploited = True</code>.
+      A working exploit exists <em>and</em> it is already being used against real targets.
+      The tree stops here &mdash; internet-facing status is not needed to reach High when
+      active exploitation is confirmed.
+    </div>
+    {% elif ll == "High" and el_inputs.asset_internet_facing %}
+    <div class="pipeline-callout callout-critical">
+      <strong>Why High?</strong>
+      A public exploit is available and the asset is internet-facing.
+      Even without confirmed active exploitation, an attacker can reach the vulnerable service
+      directly from the internet, making successful exploitation highly likely.
+    </div>
+    {% elif ll == "Medium" and el_inputs.exploit_available %}
+    <div class="pipeline-callout callout-warn">
+      <strong>Why Medium?</strong>
+      A public exploit is available, but <code>asset_internet_facing = False</code> and no
+      active exploitation is confirmed. An attacker would need internal network access to
+      reach the service, which reduces &mdash; but does not eliminate &mdash; the risk.
+    </div>
+    {% elif ll == "Medium" %}
+    <div class="pipeline-callout callout-warn">
+      <strong>Why Medium?</strong>
+      Exploitation has been observed in the wild despite no public exploit being known.
+      This unusual combination still warrants a Medium rating because real-world harm has occurred.
+    </div>
+    {% elif ll == "Low" %}
+    <div class="pipeline-callout callout-good">
+      <strong>Why Low?</strong>
+      No public exploit exists and no active exploitation has been reported.
+      Both conditions must be absent for the tree to reach the lowest-risk outcome.
+    </div>
+    {% endif %}
+    <p class="inputs-used">Fields read: {{ el_inputs }}</p>
+
+    {# ── Tree 2: Business impact ──────────────────────────────────────────── #}
+    <h3>Tree 2 &mdash; Business impact &rarr; <strong>{{ bi }}</strong></h3>
+    <p class="stage-intro">
+      Asks: if this vulnerability were exploited, how severely would it affect the business?
+      Combines the asset environment (production vs non-production) and the technical severity
+      band (from CVSS or scanner category) to enter an impact matrix. When a CMDB record was
+      found during ingestion, a second elevated matrix becomes reachable.
+    </p>
     <ol class="tree-path">
       {% for step in explanation.evidence_pointers.business_impact.path %}
       <li>{{ step }}</li>
       {% endfor %}
     </ol>
-    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.business_impact.inputs }}</p>
 
-    <h3>Urgency &rarr; {{ explanation.urgency }}</h3>
+    {% if bi == "Unknown" %}
+    <div class="pipeline-callout callout-neutral">
+      <strong>Why Unknown?</strong>
+      Either <code>asset_environment</code> or the technical severity band was missing.
+      Without both axes the impact matrix cannot be entered.
+    </div>
+    {% elif finding.asset_business_critical is none %}
+    <div class="pipeline-callout callout-warn">
+      <strong>Why preliminary?</strong>
+      <code>asset_business_critical</code> is <code>None</code> &mdash; no CMDB asset record
+      matched the asset identifier during ingestion. The tree took the preliminary path,
+      which uses the standard matrix and caps impact at <strong>High</strong>.
+      The system never infers business criticality from scanner data alone.
+    </div>
+    {% elif finding.asset_business_critical or finding.asset_owner_privileged %}
+    <div class="pipeline-callout callout-critical">
+      <strong>Why complete (elevated)?</strong>
+      A CMDB record was found during ingestion and at least one elevation flag is set:
+      <code>asset_business_critical = {{ finding.asset_business_critical }}</code>,
+      <code>asset_owner_privileged = {{ finding.asset_owner_privileged }}</code>.
+      Either flag alone is enough to unlock the critical impact matrix, allowing the
+      rating to reach <strong>Critical</strong>.
+    </div>
+    {% else %}
+    <div class="pipeline-callout callout-good">
+      <strong>Why complete (not elevated)?</strong>
+      A CMDB record was found but neither elevation flag is set:
+      <code>asset_business_critical = False</code>,
+      <code>asset_owner_privileged = {{ finding.asset_owner_privileged if finding.asset_owner_privileged is not none else "None" }}</code>.
+      The standard matrix applies &mdash; same outcome as the preliminary path, but the rating
+      is now confirmed rather than estimated.
+    </div>
+    {% endif %}
+    <p class="inputs-used">Fields read: {{ bi_inputs }}</p>
+
+    {# ── Tree 3: Urgency ──────────────────────────────────────────────────── #}
+    <h3>Tree 3 &mdash; Urgency &rarr; <strong>{{ explanation.urgency }}</strong></h3>
+    <p class="stage-intro">
+      Asks: how quickly must this finding be acted on? Takes the <em>output</em> of Tree 1
+      (not raw finding fields) as its first input. A High likelihood immediately gives
+      Immediate regardless of anything else. Below High, patch availability and how many
+      days the finding has been open versus the remediation threshold decide the outcome.
+    </p>
     <ol class="tree-path">
       {% for step in explanation.evidence_pointers.urgency.path %}
       <li>{{ step }}</li>
       {% endfor %}
     </ol>
-    <p class="inputs-used">Inputs used: {{ explanation.evidence_pointers.urgency.inputs }}</p>
+
+    {% if explanation.urgency == "Immediate" and urg_inputs.exploitation_likelihood == "High" %}
+    <div class="pipeline-callout callout-critical">
+      <strong>Why Immediate?</strong>
+      Exploitation likelihood is <strong>High</strong>. This shortcuts every remaining check:
+      patch availability and days open are not read at all. When a vulnerability is being
+      actively exploited there is no safe waiting period regardless of remediation timelines.
+    </div>
+    {% elif explanation.urgency == "Immediate" %}
+    <div class="pipeline-callout callout-critical">
+      <strong>Why Immediate?</strong>
+      Exploitation likelihood is not High, but the asset is internet-facing and the finding
+      has exceeded its remediation threshold. Exposure plus an overdue SLA together justify
+      the highest urgency even without confirmed exploitability data.
+    </div>
+    {% elif explanation.urgency == "Scheduled" %}
+    <div class="pipeline-callout callout-warn">
+      <strong>Why Scheduled?</strong>
+      The conditions for Immediate were not met &mdash; likelihood is not High and the finding
+      is either within its SLA window or no patch is yet available. The finding is real and
+      should enter the next planned remediation cycle, but does not require emergency action today.
+    </div>
+    {% elif explanation.urgency == "Monitor" %}
+    <div class="pipeline-callout callout-good">
+      <strong>Why Monitor?</strong>
+      No exploit exists, no active exploitation is reported, and the finding is either within
+      its SLA window or has no patch to apply. There is nothing actionable right now;
+      re-evaluate at the next scheduled review.
+    </div>
+    {% endif %}
+    <p class="inputs-used">Fields read: {{ urg_inputs }}</p>
   </section>
 
+  {# ───────────────────────────────────────────────────────────────────────────
+     STAGE 3 — EXPLANATION
+  ─────────────────────────────────────────────────────────────────────────── #}
   <section class="stage">
     <h2>Stage 3 &mdash; Explanation</h2>
-    <dl>
-      <dt>Certainty</dt>
-      <dd>{{ explanation.certainty_level }}</dd>
+    <p class="stage-intro">
+      The explanation layer converts the three rated outcomes into human language.
+      No new decisions are made &mdash; every sentence derives from values already produced
+      by abstraction. The resulting <strong>ExplanationObject</strong> is then passed unchanged
+      to both stakeholder views.
+    </p>
 
-      <dt>Top factors</dt>
-      <dd>
-        <ol>
-          {% for factor in explanation.top_factors %}
-          <li><code>{{ factor.field }}</code> = <code>{{ factor.value }}</code> &mdash; {{ factor.label }}</li>
-          {% endfor %}
-        </ol>
-      </dd>
+    <div class="field-group">
+      <h4>Certainty</h4>
+      <dl>
+        <dt>certainty_level</dt>
+        <dd><strong>{{ explanation.certainty_level }}</strong></dd>
+      </dl>
+      {% if explanation.certainty_level == "Known" %}
+      <div class="pipeline-callout callout-good">
+        Every field the three trees read was present and non-null in the NormalisedFinding.
+        The ratings are based on complete information for this source format.
+      </div>
+      {% elif explanation.certainty_level == "Known uncertainty" %}
+      <div class="pipeline-callout callout-warn">
+        Some fields the trees needed were missing &mdash; but each missing field is listed in
+        <code>absent_by_format</code> for <code>{{ finding.source_format }}</code>.
+        The gaps are a known structural property of this source format, not a data quality problem.
+        The rating is reliable given what the source can provide.
+      </div>
+      {% elif explanation.certainty_level == "Unknown uncertainty" %}
+      <div class="pipeline-callout callout-warn">
+        A field that this source format normally provides is unexpectedly null.
+        The rating may be less reliable than it appears; investigate whether the source data
+        is complete.
+      </div>
+      {% elif explanation.certainty_level == "Unknowable" %}
+      <div class="pipeline-callout callout-neutral">
+        No CVE identifier is associated with this finding. Exploitability is undefined in
+        principle for end-of-life or misconfiguration detections, so the exploitation likelihood
+        tree cannot produce a meaningful rating.
+      </div>
+      {% endif %}
+    </div>
 
-      <dt>Risk summary</dt>
-      <dd>{{ explanation.risk_summary }}</dd>
+    <div class="field-group">
+      <h4>Top factors &rarr; risk summary</h4>
+      <p class="stage-intro">
+        The explanation layer picks the most decisive fields from the tree paths (up to three),
+        converts each to a plain-English label, and slots them into a sentence template.
+      </p>
+      <ol>
+        {% for factor in explanation.top_factors %}
+        <li>
+          <code>{{ factor.field }} = {{ factor.value }}</code>
+          &rarr; &ldquo;{{ factor.label }}&rdquo;
+        </li>
+        {% endfor %}
+      </ol>
+      <blockquote class="pipeline-quote">{{ explanation.risk_summary }}</blockquote>
+    </div>
 
-      <dt>Mitigation</dt>
-      <dd>{{ explanation.mitigation or "None (not required)" }}</dd>
+    <div class="field-group">
+      <h4>Business consequence</h4>
+      <p class="stage-intro">Looked up from <code>business_impact = {{ bi }}</code>:</p>
+      <blockquote class="pipeline-quote">{{ explanation.business_consequence }}</blockquote>
+    </div>
 
-      <dt>Limitations</dt>
-      <dd>{{ explanation.limitations or "None recorded" }}</dd>
-    </dl>
+    <div class="field-group">
+      <h4>Time horizon &amp; action</h4>
+      <dl>
+        <dt>time_horizon <span class="derived-note">from urgency = {{ explanation.urgency }}</span></dt>
+        <dd><em>{{ explanation.time_horizon }}</em></dd>
+        <dt>action</dt>
+        <dd>{{ explanation.action }}</dd>
+        {% if explanation.mitigation %}
+        <dt>mitigation</dt>
+        <dd>{{ explanation.mitigation }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    {% if explanation.limitations %}
+    <div class="field-group">
+      <h4>Limitations</h4>
+      <div class="pipeline-callout callout-neutral">{{ explanation.limitations }}</div>
+    </div>
+    {% endif %}
   </section>
 
+  {# ───────────────────────────────────────────────────────────────────────────
+     STAGE 4 — VIEWS
+  ─────────────────────────────────────────────────────────────────────────── #}
   <section class="stage">
-    <h2>Stage 4 &mdash; Two renderings</h2>
-    <p>
-      The same object above is rendered as a
-      <a href="/finding/{{ finding_id }}?role=technical">technical view</a>
-      for analysts and a
-      <a href="/finding/{{ finding_id }}?role=nontechnical">non-technical view</a>
-      for delivery and client-facing roles. Neither view performs any further
-      computation; both display a subset of what is shown here.
+    <h2>Stage 4 &mdash; Two renderings of the same object</h2>
+    <p class="stage-intro">
+      The ExplanationObject built above is passed to two separate renderers.
+      Neither renderer makes any decisions or adds any information &mdash; they each
+      select a subset of the same object and format it for a different audience.
+    </p>
+    <ul>
+      <li>
+        <a href="/finding/{{ finding_id }}?role=technical">Technical view</a> &mdash;
+        shows the tree paths and inputs used, CVSS score, severity band, and all intermediate
+        values. Intended for security analysts.
+      </li>
+      <li>
+        <a href="/finding/{{ finding_id }}?role=nontechnical">Non-technical view</a> &mdash;
+        shows only the risk summary, business consequence, time horizon, and action.
+        No field names or scores. Intended for delivery leads and client-facing roles.
+      </li>
+    </ul>
+    <p class="stage-intro">
+      Adding a third audience (for example an executive one-pager) requires only
+      one new renderer function and one new template &mdash; no other layer changes.
     </p>
   </section>
+
 </article>
 {% endblock %}

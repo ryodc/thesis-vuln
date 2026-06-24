@@ -221,3 +221,70 @@ dd.highlight {
 .stage dl dd {
   margin: 0 0 0.25rem 0;
 }
+
+.stage-intro {
+  color: #52606d;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.field-group {
+  margin-bottom: 0.5rem;
+}
+
+.field-group h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7b8794;
+  margin: 1.25rem 0 0.35rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.derived-note {
+  font-size: 0.78rem;
+  color: #2e6da4;
+  font-style: italic;
+  margin-left: 0.4rem;
+}
+
+.pipeline-callout {
+  border-left: 4px solid #2e6da4;
+  background: #eef4fb;
+  padding: 0.6rem 1rem;
+  margin: 0.6rem 0 0.9rem;
+  font-size: 0.9rem;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.5;
+}
+
+.callout-good {
+  border-color: #1e8449;
+  background: #eafaf1;
+}
+
+.callout-warn {
+  border-color: #d68910;
+  background: #fef9e7;
+}
+
+.callout-critical {
+  border-color: #c0392b;
+  background: #fdedec;
+}
+
+.callout-neutral {
+  border-color: #7b8794;
+  background: #f4f6f7;
+}
+
+.pipeline-quote {
+  margin: 0.5rem 0 0.75rem 0;
+  padding: 0.6rem 1rem;
+  border-left: 3px solid #cbd2d9;
+  color: #1a1a1a;
+  font-style: italic;
+  background: #f9fafb;
+  border-radius: 0 4px 4px 0;
+}
