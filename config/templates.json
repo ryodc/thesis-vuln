@@ -29,7 +29,7 @@
   },
   "asset_context": {
     "business_critical": "This system is flagged as business-critical in the asset inventory.",
-    "owner_privileged": "It is managed by a privileged account (domain administrator) — a successful attack could give an attacker elevated control over the wider environment.",
-    "both": "This system is flagged as business-critical in the asset inventory and is managed by a privileged account (domain administrator) — a successful attack could give an attacker elevated control over the wider environment."
+    "owner_privileged": "It is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment.",
+    "both": "This system is flagged as business-critical in the asset inventory and is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment."
   }
 }
