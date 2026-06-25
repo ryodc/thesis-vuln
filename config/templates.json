@@ -26,5 +26,10 @@
   "mitigation": {
     "immediate_with_patch": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
     "no_patch": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system."
+  },
+  "asset_context": {
+    "business_critical": "This system is flagged as business-critical in the asset inventory.",
+    "owner_privileged": "It is managed by a privileged account (domain administrator) — a successful attack could give an attacker elevated control over the wider environment.",
+    "both": "This system is flagged as business-critical in the asset inventory and is managed by a privileged account (domain administrator) — a successful attack could give an attacker elevated control over the wider environment."
   }
 }

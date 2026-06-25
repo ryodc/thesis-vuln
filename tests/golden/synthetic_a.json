@@ -54,6 +54,7 @@
     }
   },
   "limitations": null,
+  "asset_context_note": null,
   "title": "XZ Utils Backdoor (liblzma)",
   "technical_detail": {
     "exploitation_likelihood": "High",

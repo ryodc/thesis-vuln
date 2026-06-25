@@ -29,16 +29,8 @@
 
   <p class="risk-summary">{{ explanation.risk_summary }}</p>
 
-  {# CMDB context — only shown when the asset inventory added something meaningful #}
-  {% if td.asset_business_critical or td.asset_owner_privileged %}
-  <p class="cmdb-context">
-    {% if td.asset_business_critical %}
-      This system is flagged as business-critical in the asset inventory.
-    {% endif %}
-    {% if td.asset_owner_privileged %}
-      It is managed by a privileged account (domain administrator) &mdash; a successful attack could give an attacker elevated control over the wider environment.
-    {% endif %}
-  </p>
+  {% if explanation.asset_context_note %}
+  <p class="cmdb-context">{{ explanation.asset_context_note }}</p>
   {% endif %}
 
   <section class="consequence">

@@ -93,6 +93,7 @@ class ExplanationObject:
     mitigation: str | None
     evidence_pointers: dict
     limitations: str | None
+    asset_context_note: str | None
 
     # render support (presentation metadata, not part of the thesis
     # ExplanationObject schema)

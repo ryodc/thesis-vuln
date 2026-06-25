@@ -78,6 +78,7 @@ def test_explanation_object_round_trips_through_asdict_and_json():
         mitigation=None,
         evidence_pointers={"exploitation_likelihood": {"inputs": {}, "path": []}},
         limitations=None,
+        asset_context_note=None,
         title="Example finding",
         technical_detail={"cvss_score": 9.8},
     )

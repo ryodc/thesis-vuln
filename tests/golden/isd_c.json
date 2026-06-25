@@ -57,6 +57,7 @@
     }
   },
   "limitations": "Exploit availability and active exploitation data are not included in the ISD data source, so exploitation likelihood could not be assessed. Impact is a preliminary assessment based on the asset environment and the scanner's categorical severity; asset criticality, business service, and data sensitivity were not available in the source. No CVE identifier is associated with this finding; it was detected as end-of-life or misconfigured software. The system does not determine asset ownership or final remediation decisions.",
+  "asset_context_note": null,
   "title": "EOL/Obsolete Software: Python 3.7.x Detected",
   "technical_detail": {
     "exploitation_likelihood": "Unknown",

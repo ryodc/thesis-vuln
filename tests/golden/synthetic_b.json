@@ -58,6 +58,7 @@
     }
   },
   "limitations": null,
+  "asset_context_note": null,
   "title": "Remote Code Execution in Internal CI Agent",
   "technical_detail": {
     "exploitation_likelihood": "Low",

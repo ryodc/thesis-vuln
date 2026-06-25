@@ -267,6 +267,18 @@ def _mitigation(finding: NormalisedFinding, urgency: TreeOutcome) -> str | None:
 # ---------------------------------------------------------------------------
 
 
+def _asset_context_note(finding: NormalisedFinding) -> str | None:
+    bc = finding.asset_business_critical is True
+    op = finding.asset_owner_privileged is True
+    if bc and op:
+        return TEMPLATES["asset_context"]["both"]
+    if bc:
+        return TEMPLATES["asset_context"]["business_critical"]
+    if op:
+        return TEMPLATES["asset_context"]["owner_privileged"]
+    return None
+
+
 def _limitations(finding: NormalisedFinding, abstraction: AbstractionResult) -> str | None:
     sentences: list[str] = []
 
@@ -380,6 +392,7 @@ def build_explanation(finding: NormalisedFinding, abstraction: AbstractionResult
         mitigation=_mitigation(finding, abstraction.urgency),
         evidence_pointers=_evidence_pointers(abstraction),
         limitations=_limitations(finding, abstraction),
+        asset_context_note=_asset_context_note(finding),
         title=finding.title,
         technical_detail=_technical_detail(finding, abstraction),
     )

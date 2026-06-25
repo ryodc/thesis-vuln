@@ -57,6 +57,7 @@
     }
   },
   "limitations": null,
+  "asset_context_note": null,
   "title": "Buffer Overflow in Industrial Control Protocol Library",
   "technical_detail": {
     "exploitation_likelihood": "Medium",
