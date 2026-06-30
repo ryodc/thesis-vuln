@@ -1,0 +1,37 @@
+{
+  "method": "Stakeholder-Specific Vulnerability Categorization (Spring et al., 2021)",
+  "role": "deployer",
+  "trees": {
+    "exploitation_likelihood": {
+      "decision_points": [
+        { "field": "exploit_available", "values": [true, false, null], "ssvc": "Exploitation" },
+        { "field": "known_exploited", "values": [true, false, null], "ssvc": "Exploitation (active)" },
+        { "field": "asset_internet_facing", "values": [true, false, null], "ssvc": "System Exposure" }
+      ],
+      "outcomes": ["High", "Medium", "Low", "Unknown"]
+    },
+    "impact": {
+      "decision_points": [
+        { "field": "asset_environment", "values": ["production", "staging", null], "ssvc": "Mission & Human Impact" },
+        { "field": "technical_severity_tier", "values": ["high", "moderate", "low", null], "ssvc": "Technical Impact" },
+        { "field": "asset_business_critical", "values": [true, false, null], "ssvc": "custom: asset business criticality" },
+        { "field": "asset_owner_privileged", "values": [true, false, null], "ssvc": "custom: asset owner privilege" }
+      ],
+      "outcomes": ["Critical", "High", "Medium", "Low", "Unknown"]
+    },
+    "urgency": {
+      "decision_points": [
+        { "field": "exploitation_likelihood", "values": ["High", "Medium", "Low", "Unknown"], "ssvc": "derived from Exploitation/Exposure/Impact" },
+        { "field": "patch_available", "values": [true, false, null], "ssvc": "custom: remediation availability" },
+        { "field": "overdue", "values": [true, false], "ssvc": "custom: SLA breach" },
+        { "field": "asset_internet_facing", "values": [true, false, null], "ssvc": "System Exposure" }
+      ],
+      "outcomes": ["Immediate", "Scheduled", "Monitor"],
+      "ssvc_outcome_mapping": { "Immediate": "Immediate", "Scheduled": "Scheduled", "Monitor": "Defer" }
+    }
+  },
+  "deviations": [
+    "The single SSVC deployer decision is split into three trees (likelihood, impact, urgency) so each axis can be explained independently.",
+    "Two organisation-specific decision points (asset business criticality, asset owner privilege) are added from the CMDB; SSVC explicitly permits stakeholder-defined decision points."
+  ]
+}
