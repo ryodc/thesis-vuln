@@ -5,16 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Vulnerability Explainer{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script>
+    /* Apply saved theme before paint to avoid a flash. Falls back to OS preference. */
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
-    <a class="site-title" href="/">Vulnerability Explainer</a>
-    <nav class="site-nav">
-      <a href="/upload">Upload findings</a>
-    </nav>
+    <div class="site-header__inner">
+      <a class="site-title" href="/"><span class="brand-mark" aria-hidden="true">&rsaquo;</span>Vulnerability Explainer</a>
+      <nav class="site-nav">
+        <a href="/upload">Upload findings</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colour theme">
+          <span class="theme-toggle__label">Dark mode</span>
+        </button>
+      </nav>
+    </div>
   </header>
-  <main class="page">
+  <main class="page" id="main">
     {% block content %}{% endblock %}
   </main>
+  <script>
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var label = btn.querySelector('.theme-toggle__label');
+      function current() {
+        return document.documentElement.dataset.theme
+          || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
+      function sync() {
+        var dark = current() === 'dark';
+        label.textContent = dark ? 'Light mode' : 'Dark mode';
+        btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync();
+      });
+      sync();
+    })();
+  </script>
 </body>
 </html>

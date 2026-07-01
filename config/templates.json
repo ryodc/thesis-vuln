@@ -1,35 +1,35 @@
 {
-  "risk_summary": {
-    "known_two_factor": "This vulnerability carries {urgency} urgency because {factor_1} and {factor_2}.",
-    "known_one_factor": "This vulnerability carries {urgency} urgency because {factor_1}.",
-    "unknown_likelihood_two_factor": "This vulnerability carries {urgency} urgency because {factor_1} and {factor_2}. How likely exploitation is could not be determined from the available data.",
-    "unknown_likelihood_one_factor": "This vulnerability carries {urgency} urgency because {factor_1}. How likely exploitation is could not be determined from the available data."
-  },
-  "business_consequence": {
-    "Critical": "If exploited, this vulnerability could allow an attacker to take control of a business-critical system, with the potential for serious disruption to operations or exposure of sensitive data.",
-    "High": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
-    "Medium": "If exploited, this vulnerability could give an attacker a foothold on an internal system, which could be used as a step towards more sensitive systems.",
-    "Low": "If exploited, the direct business impact is expected to be limited, although the finding still weakens the overall security posture.",
-    "Unknown": "The potential business impact could not be fully assessed from the available data; the affected system is a production system and caution is warranted."
-  },
-  "time_horizon": {
-    "Immediate": "Action should begin within the current working week; escalate if remediation cannot start promptly.",
-    "Scheduled": "Include this finding in the next planned remediation cycle.",
-    "Monitor": "No action is required now; review at the next scheduled assessment."
-  },
-  "action": {
-    "patch": "Apply the available security update for the affected system. {vendor_ref}",
-    "no_patch": "No direct patch is available. {vendor_ref}",
-    "vendor_ref_present": "The vendor's recommended remediation: {solution_excerpt}",
-    "vendor_ref_absent": "Consult the responsible technical team for the appropriate remediation route."
-  },
-  "mitigation": {
-    "immediate_with_patch": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
-    "no_patch": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system."
-  },
-  "asset_context": {
-    "business_critical": "This system is flagged as business-critical in the asset inventory.",
-    "owner_privileged": "It is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment.",
-    "both": "This system is flagged as business-critical in the asset inventory and is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment."
+    "risk_summary": {
+      "known_two_factor": "This vulnerability carries {urgency} urgency because {factor_1} and {factor_2}.",
+      "known_one_factor": "This vulnerability carries {urgency} urgency because {factor_1}.",
+      "unknown_likelihood_two_factor": "This vulnerability carries {urgency} urgency because {factor_1} and {factor_2}. How likely exploitation is could not be determined from the available data.",
+      "unknown_likelihood_one_factor": "This vulnerability carries {urgency} urgency because {factor_1}. How likely exploitation is could not be determined from the available data."
+    },
+    "business_consequence": {
+      "Critical": "If exploited, this vulnerability could allow an attacker to take control of a business-critical system, with the potential for serious disruption to operations or exposure of sensitive data.",
+      "High": "If exploited, this vulnerability could allow an attacker to gain unauthorised access to a production system, potentially disrupting business operations or exposing sensitive data.",
+      "Medium": "If exploited, this vulnerability could give an attacker initial access to an internal system, which could be used as a step towards more sensitive systems.",
+      "Low": "If exploited, the direct business impact is expected to be limited, although the finding still weakens the overall security posture.",
+      "Unknown": "The potential business impact could not be fully assessed from the available data; the affected system is a production system and caution is warranted."
+    },
+    "time_horizon": {
+      "Immediate": "Action should begin within the current working week; escalate if remediation cannot start promptly.",
+      "Scheduled": "Include this finding in the next planned remediation window.",
+      "Monitor": "No immediate remediation is required; review at the next scheduled assessment."
+    },
+    "action": {
+      "patch": "Apply the available security update for the affected system. {vendor_ref}",
+      "no_patch": "No direct patch is available. {vendor_ref}",
+      "vendor_ref_present": "The vendor's recommended remediation: {solution_excerpt}",
+      "vendor_ref_absent": "Consult the responsible technical team for the appropriate remediation route."
+    },
+    "mitigation": {
+      "immediate_with_patch": "If the update cannot be applied immediately, restrict network access to the affected service to trusted sources until patching is complete. Note that any temporary measure carries its own trade-offs and must be validated against this specific system before use.",
+      "no_patch": "Until a permanent fix is in place, apply compensating controls such as restricting access to the affected component, and plan the upgrade or configuration change the vendor recommends. Temporary measures carry their own trade-offs and must be validated against this specific system."
+    },
+    "asset_context": {
+      "business_critical": "This system is flagged as business-critical in the asset inventory.",
+      "owner_privileged": "It is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment.",
+      "both": "This system is flagged as business-critical in the asset inventory and is managed by a privileged account, such as a domain administrator. A successful attack could give an attacker elevated control over the wider environment."
+    }
   }
-}
